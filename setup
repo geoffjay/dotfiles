@@ -1,0 +1,9 @@
+#!/bin/bash
+
+rsync -a \
+    --exclude=.git \
+    --exclude=.gitignore \
+    --exclude=.gitmodules \
+    --exclude=README.md \
+    --exclude=setup \
+    ./ ~/

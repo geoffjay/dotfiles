@@ -1,0 +1,40 @@
+# draw the coanda logo
+tput clear
+echo -en '\033[1;37;1m\n'
+echo -en '         .oddddo;
+         :KNNNNXo
+         :KNNNNXo
+         :KNNNNXo
+         :KNNNNXo.
+         :KNNNNXd.
+         lXNNNNNO,
+        ;0NNNNNNXk,
+      .lKNNX0kxoool,
+    .c0XXOc,..\033[1;31;1m,,,,,\033[1;37;1m..
+   .dXXO:..\033[1;31;1m:loddddddo:\033[1;37;1m.
+  .oXXk:.\033[1;31;1m;odddddddddddo:\033[1;37;1m.
+  ;KNO,.\033[1;31;1m;odddddddddddddd:\033[1;37;1m.
+  cXNk..\033[1;31;1mcdddddddddddddddl\033[1;37;1m.
+  ;KNO,.\033[1;31;1m;oddddddddddddddc\033[1;37;1m.
+  .xXXd..\033[1;31;1m:oddddddddddddc\033[1;37;1m.
+   .xXXx,.,\033[1;31;1mcodddddddol;\033[1;37;1m.
+    .dKXKx;...\033[1;31;1moddoo,\033[1;37;1m..
+      .o0XXKkdo:::::;,.
+        .;dOKXXXNNNNXXKxc.
+            ...:lxKXNNNNX0o.
+                  .c0NNNNNXO,
+                    .dKNNNNNKo.
+                      :0XXXXXXk;
+                       .:::::::.'
+
+# write system information to the screen
+IP=`ip a | sed '/inet\s/!d;/127.0/d;/virbr.$/d;/tun.$/d;/vmnet.$/d' | awk '{print $2}'`
+echo -en '\033[1;34;1m'
+tput cup 3 30 && echo -en '/**'
+tput cup 4 30 && echo -en ' * user:   '$USER
+tput cup 5 30 && echo -en ' * host:   '`hostname`' [ '$IP' ]'
+tput cup 6 30 && echo -en ' * kernel: '`uname -r`
+tput cup 7 30 && echo -en ' * date:   '`date +%Y-%m-%d`
+tput cup 8 30 && echo -en ' **/'
+echo -en '\033[37;1m'
+tput cup 26 0
