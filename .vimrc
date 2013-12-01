@@ -64,6 +64,10 @@ if v:version >= 7.3
   set undoreload=10000  " maximum number lines to save for undo on a buffer reload
 endif
 
+" split rules - changes MiniBufExplorer
+"set splitright
+"set splitbelow
+
 set t_Co=256
 set term=xterm-256color
 "let g:solarized_termcolors=256
