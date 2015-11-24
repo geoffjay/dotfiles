@@ -28,7 +28,7 @@ echo -en '         .oddddo;
                        .:::::::.'
 
 # write system information to the screen
-IP=`/sbin/ifconfig | sed '/inet\s/!d;/127.0/d;' | awk '{print $2}'`
+IP=`ip a | sed '/inet\s/!d;/127.0/d;/virbr.$/d;/tun.$/d;/vmnet.$/d' | awk '{print $2}'`
 echo -en '\033[1;34;1m'
 tput cup 3 30 && echo -en '/**'
 tput cup 4 30 && echo -en ' * user:   '$USER

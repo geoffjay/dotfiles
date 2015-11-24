@@ -37,6 +37,6 @@ bindkey -k k7 hardstatus alwaysignore
 
 # --
 # status bar
-backtick 1 5 5 git-branch
-hardstatus alwayslastline "%{wK}%1`"
+#backtick 1 5 5 git-branch
+#hardstatus alwayslastline "%{wK}%1`"
 #hardstatus alwayslastline "%w"
