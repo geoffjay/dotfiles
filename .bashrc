@@ -1,48 +1,49 @@
 ###
 # ~/.bashrc
 
-# -------- run external environment setup files -------- #
+platform='unknown'
+unamestr=`uname`
 
-# source global definitions
-if [ -f /etc/bashrc ]; then
-  . /etc/bashrc
+if [[ $unamestr == 'Linux' ]]; then
+  platform='linux'
+elif [[ $unamestr == 'MINGW64_NT-6.1' ]]; then
+  platform='windows'
 fi
 
-# enable global tab completion
-if [ -f /etc/bash_completion ]; then
-  . /etc/bash_completion
+#
+# Linux specific environment setup
+#
+
+if [[ $platform == 'linux' ]]; then
+  # source global definitions
+  [ -f /etc/bashrc ] && source /etc/bashrc
+
+  # enable global tab completion
+  [ -f /etc/bash_completion ] && source /etc/bash_completion
+
+  # load defaults for X applications
+  if which xrdb &>/dev/null; then
+    if [ -n "$DISPLAY" ]; then
+      xrdb -load ~/.Xdefaults
+    fi
+  fi
 fi
 
-# source the bash profile to set prompt and umask
-#if [ -f ~/.bash_profile ]; then
-#  . ~/.bash_profile
-#fi
+#
+# Generic environment setup
+#
 
-# source alias definitions if they exist in a separate file
-if [ -f ~/.bash_aliases ]; then
-  . ~/.bash_aliases
-fi
+[ -f ~/.bash_profile ] && source ~/.bash_profile
+[ -f ~/.bash_aliases ] && source ~/.bash_aliases
 
 # source custom bash signature
 case "$-" in
-  # check for interactive shell
-  *i*)
-    # print a custom signature
-    if [ -f ~/.bash_sig ]; then
-      . ~/.bash_sig
-    fi
-    ;;
-  *)
-    ;;
+  # only do if there's an interactive shell
+  *i*) [ -f ~/.bash_sig ] && source ~/.bash_sig ;;
+  *)   ;;
 esac
 
-# -------- load defaults for X applications --------- #
-
-if [ -n "$DISPLAY" ]; then
-  xrdb -load ~/.Xdefaults
-fi
-
-# -------- non crdc variable and color setup -------- #
+# -------- variable and color setup -------- #
 
 export EDITOR=vim
 
@@ -78,8 +79,10 @@ if [ -d /opt/processing ]; then
   export PATH=/opt/processing:$PATH
 fi
 
-# java home for google sql command line tool
-export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.9.x86_64/
+export PATH=~/.local/bin:$PATH
+
+# Android SDK path for Studio
+export PATH=~/Android/Sdk/tools:$PATH
 
 # fluent/gambit/ansys vars
 export LM_LICENSE_FILE=7241@licenseserver
@@ -88,6 +91,9 @@ export FLUENTLM_LICENSE_FILE=1055@licenseserver
 # development related
 export MALLOC_CHECK_=0            # fix g_strfreev on etch systems
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/
+
+PERL_MB_OPT="--install_base \"/home/gjohn/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/home/gjohn/perl5"; export PERL_MM_OPT;
 
 # colored man pages
 export LESS_TERMCAP_md=$(printf '\e[01;35m') # enter double-bright mode - bold, magenta
@@ -136,12 +142,12 @@ fi
 
 # functions to show git dirty state
 function parse_git_dirty {
-    [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "*"
+  [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "*"
 }
 
 function parse_git_branch {
-    git branch --no-color 2> /dev/null | \
-        sed -e '/^[^*]/d' -e "s/* \(.*\)/[\1$(parse_git_dirty)]/"
+  git branch --no-color 2> /dev/null | \
+    sed -e '/^[^*]/d' -e "s/* \(.*\)/[\1$(parse_git_dirty)]/"
 }
 
 function dir_chomp {
@@ -149,17 +155,18 @@ function dir_chomp {
     s=${#p}
     while [[ $p != ${p//\/} ]]&&(($s>$2))
     do
-        p=${p#/}
-        [[ $p =~ \.?. ]]
-        b=$b/${BASH_REMATCH[0]}
-        p=${p#*/}
-        ((s=${#b}+${#p}))
+      p=${p#/}
+      [[ $p =~ \.?. ]]
+      b=$b/${BASH_REMATCH[0]}
+      p=${p#*/}
+      ((s=${#b}+${#p}))
     done
     echo ${b/\/~/\~}${b+/}$p
 }
 
 function dir_collapse {
-    pwd | perl -ne '@a=split(/\//, $_); foreach(@a[1..$#a]) { print "/".substr($_, 0, 1); }'
+    d=`pwd | perl -ne '@a=split(/\//, $_); foreach(@a[1..$#a]) { print "/".substr($_, 0, 1); }'`
+    echo $d
 }
 
 # load git branch prompt script
@@ -174,42 +181,13 @@ PS1="\n\[\e[32;1m\]\
 \[\e[37;1m\]\$(dir_collapse)\[\e[32;1m\]\n\
 \[\e[37;1m\]\$(__git_ps1)\[\e[32;1m\] :: \[\e[0m\]"
 
-#PS1="\n\[\e[32;1m\]\
-#[\[\e[34;1m\]\u\[\e[35;1m\]@\[\e[37;1m\]\h\[\e[32;1m\]]\
-#[\[\e[37;1m\]\w\[\e[32;1m\]]\n\
-#[\[\e[37;1m\]! \!\[\e[32;1m\]] :: \[\e[0m\]"
-
-#PS1="\n\[\e[32;1m\]\
-#[\[\e[34;1m\]\u\[\e[35;1m\]@\[\e[37;1m\]\h\[\e[32;1m\]]\
-#[\[\e[37;1m\]\w\[\e[32;1m\]]\n\
-#[\[\e[37;1m\]! \!\[\e[32;1m\]]$(parse_git_branch) :: \[\e[0m\]"
-
-# old path lines for PS1
-#[\[\e[37;1m\]\w\[\e[32;1m\]]\n\
-#[\[\e[37;1m\]$(echo $(dirname $(echo \w) | sed "s:$HOME:~:")/ | sed -e "s;\(/\.\?.\)[^/]*;\1;g" -e "s;/h/s;~;" -e "s;\./;;")\[\e[32;1m\]]\n\
-#$(echo $(dirname \w)|sed -e "s;\(/\.\?.\)[^/]*;\1;g" -e "s;/h/s;~;")/\W\n\
-#$(echo $(dirname $(echo \w | sed "s;$HOME;~;"))/ |sed -e "s;\(/\.\?.\)[^/]*;\1;g" -e "s;/h/s;~;" -e "s;\./;;")\W\n\
-
-#PS1="\n\[\e[32;1m\]\
-#┌─┤\[\e[34;1m\]\u\[\e[35;1m\]@\[\e[37;1m\]\h\[\e[32;1m\]├─\
-#┤\[\e[37;1m\]\w\[\e[32;1m\]│\n\
-#└───┤\[\e[37;1m\]! \!\[\e[32;1m\]├──▶▶ \[\e[0m\]"
-#
-#┤\[\e[34;1m\]jobs\[\e[35;1m\]:\[\e[37;1m\]\j\[\e[32;1m\]├─\
-
 else
   PS1='${debian_chroot:+($debian_chroot)}$ '
 fi
 
 unset color_prompt force_color_prompt
 
-# -------- crdc specific variable setup -------- #
-
 export TERM=xterm-256color
-
-# set mpi local ip, this method is independent of host or interface
-#MPI_LOCALIP=`/sbin/ifconfig | sed '/inet/!d;/127.0/d;/dr:\s/d;s/^.*:\(.*\)B.*$/\1/'`
-#export MPI_LOCALIP
 
 # -------- personal command aliases and additional color settings -------- #
 
@@ -224,3 +202,8 @@ fi
 
 # end of ~/.bashrc
 ###
+
+# added by travis gem
+[ -f /home/gjohn/.travis/travis.sh ] && source /home/gjohn/.travis/travis.sh
+
+# vim: set ts=2 sw=2:
