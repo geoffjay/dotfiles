@@ -1,0 +1,18 @@
+#!/bin/bash
+
+files=(
+    ".bash_aliases" ".bash_profile" ".bashrc" ".bash_sig" ".Xdefaults"
+    ".config/terminator/config" ".dir_colors" ".face" ".profile" ".screenrc"
+    ".gitconfig" ".gitignore_global" ".gitk" ".git-prompt.sh"
+)
+
+for file in ${files[@]}; do
+    diff ./$file ~/$file &>/dev/null
+    if [[ $? -ne 0 ]]; then
+        read -p "${file} has changed, copy ~ version here [y/n]? " yn
+        case $yn in
+            [Yy]* ) cp ~/$file ./$file; continue;;
+            [Nn]* ) continue;;
+        esac
+    fi
+done
