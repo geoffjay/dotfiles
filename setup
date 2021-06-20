@@ -6,4 +6,5 @@ rsync -a \
     --exclude=.gitmodules \
     --exclude=README.md \
     --exclude=setup \
+    --exclude=update \
     ./ ~/
