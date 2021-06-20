@@ -84,9 +84,6 @@ export PATH=~/.local/bin:$PATH
 # Android SDK path for Studio
 export PATH=~/Android/Sdk/tools:$PATH
 
-export PATH=/opt/anaconda3/bin:$PATH
-export PATH=/opt/arduino/arduino:$PATH
-
 # fluent/gambit/ansys vars
 export LM_LICENSE_FILE=7241@licenseserver
 export FLUENTLM_LICENSE_FILE=1055@licenseserver
