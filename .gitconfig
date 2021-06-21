@@ -1,51 +1,70 @@
 [user]
-  name = Geoff Johnson
-  email = geoff.johnson@coanda.ca
+    name = Geoff Johnson
+    email = geoff.jay@gmail.com
+
+[include]
+    path = ".gitconfig.d/github"
+    path = ".gitconfig.d/gitlab"
 
 [alias]
-  ci = commit -a
-  co = checkout
-  cl = clone
-  st = status -a
-  lg1 = log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative
-  lg2 = log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(bold white)— %an%C(reset)' --abbrev-commit
-  lg = !"git lg1"
-	d = difftool
+    ci = commit -a
+    co = checkout
+    cl = clone
+    r-m = rebase master
+    r-d = rebase develop
+    r-i-m = rebase -i master
+    r-i-d = rebase -i develop
+    st = status
+    lg1 = log --graph --all --abbrev-commit --date=relative \
+        --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)'
+    lg2 = log --graph --all --abbrev-commit \
+        --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''    %C(white)%s%C(reset) %C(bold white)— %an%C(reset)'
+    lg = !"git lg1"
+    lh = log --full-index --max-count=1 --format=format:'%H'
+    d = difftool
+    ls-subtrees = !"git log | grep git-subtree-dir | awk '{ print $2 }'"
 
-[difftool "diffpdf"]
-  cmd = diffpdf \"$LOCAL\" \"$REMOTE\"
-
-[color]
-  ui = auto
-
-[color "branch"]
-  current = yellow reverse
-  local = yellow
-  remote = green
-
-[color "diff"]
-  meta = yellow bold
-  frag = magenta bold
-  old = red bold
-  new = green bold
-
-[color "status"]
-  added = yellow
-  changed = green
-  untracked = cyan
-
-[color]
-  ui = true
-
-[color "diff"]
-  whitespace = red reverse
+[init]
+    templatedir = ~/.git-templates
 
 [core]
-  whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+    whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+    excludesfile = $HOME/.gitignore_global
+
+[color]
+    ui = auto
+    editor = vim
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+
+[color]
+    ui = true
+
+[color "diff"]
+    whitespace = red reverse
 
 [push]
-  default = simple
+    default = simple
+
 [diff]
-	tool = vimdiff
+    tool = vimdiff
+
 [difftool]
-	prompt = false
+    prompt = false
+
+[difftool "diffpdf"]
+    cmd = diffpdf \"$LOCAL\" \"$REMOTE\"

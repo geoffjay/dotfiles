@@ -1,0 +1,15 @@
+---
+dotfiles:
+  # general dotfiles
+  - output: ".profile"
+    template: "profile.tmpl"
+  - output: ".screenrc"
+    template: "screen.tmpl"
+  # bash configuration
+  - output: ".bashrc"
+    template: "bash/rc.tmpl"
+  - output: ".bash_profile"
+    template: "bash/profile.tmpl"
+  - output: ".bash.d/00-logging"
+    template: "bash/logging.tmpl"
+  # git configuration
