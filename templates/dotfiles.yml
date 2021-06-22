@@ -1,15 +1,38 @@
 ---
 dotfiles:
   # general dotfiles
-  - output: ".profile"
-    template: "profile.tmpl"
-  - output: ".screenrc"
-    template: "screen.tmpl"
+  - { output: ".profile",              template: "profile.tmpl" }
+  - { output: ".screenrc",             template: "screen.tmpl" }
   # bash configuration
-  - output: ".bashrc"
-    template: "bash/rc.tmpl"
-  - output: ".bash_profile"
-    template: "bash/profile.tmpl"
-  - output: ".bash.d/00-logging"
-    template: "bash/logging.tmpl"
+  - { output: ".bashrc",               template: "bash/rc.tmpl" }
+  - { output: ".bash_profile",         template: "bash/profile.tmpl" }
+  - { output: ".bash.d/00-logging",    template: "bash/logging.tmpl" }
+  - { output: ".bash.d/01-env",        template: "bash/env.tmpl" }
+  - { output: ".bash.d/10-alias",      template: "bash/alias.tmpl" }
+  - { output: ".bash.d/10-prompt",     template: "bash/prompt.tmpl" }
+  - { output: ".bash.d/11-sig",        template: "bash/sig.tmpl" }
+  - { output: ".bash.d/20-color",      template: "bash/color.tmpl" }
+  - { output: ".bash.d/21-completion", template: "bash/completion.tmpl" }
+  - { output: ".bash.d/22-direnv",     template: "bash/direnv.tmpl" }
+  - { output: ".bash.d/23-local",      template: "bash/local.tmpl" }
+  - { output: ".bash.d/24-man",        template: "bash/man.tmpl" }
+  - { output: ".bash.d/25-nvm",        template: "bash/nvm.tmpl" }
+  - { output: ".bash.d/26-pyenv",      template: "bash/pyenv.tmpl" }
+  - { output: ".bash.d/30-flutter",    template: "bash/flutter.tmpl" }
+  - { output: ".bash.d/31-go",         template: "bash/go.tmpl" }
+  - { output: ".bash.d/32-rust",       template: "bash/rust.tmpl" }
+  - { output: ".bash.d/40-ansible",    template: "bash/ansible.tmpl" }
+  - { output: ".bash.d/41-django",     template: "bash/django.tmpl" }
+  - { output: ".bash.d/42-docker",     template: "bash/docker.tmpl" }
+  - { output: ".bash.d/43-git",        template: "bash/git.tmpl" }
+  - { output: ".bash.d/44-pycharm",    template: "bash/pycharm.tmpl" }
+  - { output: ".bash.d/45-terraform",  template: "bash/terraform.tmpl" }
+  - { output: ".bash.d/46-vim",        template: "bash/vim.tmpl" }
+  - { output: ".bash.d/47-tmux",       template: "bash/tmux.tmpl" }
+  # - { output: ".bash.d/90-clio",       template: "bash/clio.tmpl" }
+  - { output: ".bash.d/91-plantd",     template: "bash/plantd.tmpl" }
   # git configuration
+  - { output: ".gitconfig",            template: "git/config.tmpl" }
+  - { output: ".gitconfig.d/github",   template: "git/github.tmpl" }
+  - { output: ".gitconfig.d/gitlab",   template: "git/gitlab.tmpl" }
+  - { output: ".gitignore_global",     template: "git/ignore-global.tmpl" }

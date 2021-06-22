@@ -1,0 +1,94 @@
+{{ .GenHeader }}
+
+LS_OPTIONS="-F -v --group-directories-first --color=auto --time-style=+\"%d.%m.%Y %H:%M\""
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  alias ls="ls ${LS_OPTIONS}"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  alias ls="gls ${LS_OPTIONS}"
+fi
+
+alias l="ls ${LS_OPTIONS} -l"
+alias ll="ls ${LS_OPTIONS} -l"
+alias la="ls ${LS_OPTIONS} -la"
+
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+
+alias grep="grep --color=tty -d skip"
+alias egrep="egrep --color=tty -d skip"
+
+alias pc="ps -fC"
+alias px="ps aux"
+alias killz="kill -KILL"
+alias cp="cp -i"                          # confirm before overwriting something
+alias df="df -h"                          # human-readable sizes
+alias du="du -h"
+alias dux="du -hx --max-depth=1"
+alias free="free -m"                      # show sizes in MB
+
+# fat fingers
+alias mkae="make"
+alias ivm="vim"
+
+logcmd() {
+    echo -e "\e[91m$@\e[0m"
+    "$@"
+}
+
+# sometimes useful
+_foreach() {
+    for i in `$1`; do $2 $i; done
+}
+
+alias foreach=_foreach
+
+# coding helpers
+ls_vala() {
+    a=$1
+    if [[ "$1" == */ ]]; then
+        a=`echo "${1%?}"`
+    fi
+    wc -l $a/*.vala
+}
+alias lv=ls_vala
+
+# find simplifiers
+
+# @param search path
+# @param case insensitive search name
+# @param search term within file
+_fsearch() {
+    #find $1 -type f -iname $2 -exec grep -H $3 {} \;
+    find $1 -type f -iname $2 | xargs egrep -e $3
+}
+
+# examples:
+#
+# 1. Replace a string in every file that contains it.
+#
+# for file in `fsearch . Makefile.am "--pkg\sdcs-config" | awk '{gsub(/:/,"\t"); print $1}'`
+# do
+#   sed -i 's/--pkg dcs-config/--pkg dcs-build/' $file
+# done
+#
+alias fsearch=_fsearch
+
+# search and replace, cwd is assumed
+#
+# @param file expression to match
+# @param search expression
+# @param string to replace with
+_sar() {
+    for file in `fsearch . $1 $2 | awk '{gsub(/:/,"\t"); print $1}' | uniq`
+    do
+        echo "Replacing $2 with $3 in $file"
+        sed -i 's/'"$2"'/'"$3"'/g' "$file"
+    done
+}
+
+# example
+#
+# sar
+alias sar=_sar

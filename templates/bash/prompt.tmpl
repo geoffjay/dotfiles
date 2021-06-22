@@ -1,0 +1,91 @@
+{{ .GenHeader }}
+
+__parse_git_branch() {
+    local branch stat
+
+    if branch=$( { git symbolic-ref --quiet HEAD || git rev-parse --short HEAD; } 2>/dev/null ); then
+        stat="$(__parse_git_dirty)"
+        printf "%s" " ${branch##*/}${stat}"
+        return
+    fi
+
+    return 1
+}
+
+__parse_git_dirty() {
+    local stat dirty untracked ahead newfile renamed deleted bits
+
+    stat=$(git stat 2>&1 | tee)
+    dirty=$(echo -n "${stat}" 2> /dev/null | grep "modified:" &> /dev/null; echo "$?")
+    untracked=$(echo -n "${stat}" 2> /dev/null | grep "Untracked files" &> /dev/null; echo "$?")
+    ahead=$(echo -n "${stat}" 2> /dev/null | grep "Your branch is ahead of" &> /dev/null; echo "$?")
+    newfile=$(echo -n "${stat}" 2> /dev/null | grep "new file:" &> /dev/null; echo "$?")
+    renamed=$(echo -n "${stat}" 2> /dev/null | grep "renamed:" &> /dev/null; echo "$?")
+    deleted=$(echo -n "${stat}" 2> /dev/null | grep "deleted:" &> /dev/null; echo "$?")
+    bits=''
+    if [ "${renamed}" = "0" ]; then
+        bits=">${bits}"
+    fi
+    if [ "${ahead}" = "0" ]; then
+        bits="*${bits}"
+    fi
+    if [ "${newfile}" = "0" ]; then
+        bits="+${bits}"
+    fi
+    if [ "${untracked}" = "0" ]; then
+        bits="?${bits}"
+    fi
+    if [ "${deleted}" = "0" ]; then
+        bits="x${bits}"
+    fi
+    if [ "${dirty}" = "0" ]; then
+        bits="!${bits}"
+    fi
+
+    if [ ! "${bits}" = "" ]; then
+        printf "%s" " ${bits}"
+    fi
+}
+
+__prompt_ps1() {
+    local sep=""
+    local alt_sep=""
+
+    printf "%s" "${WHITE_BG}${BLACK} ${BOLD}\u${NORMAL} $(__bg_color 241)${WHITE}${sep}$(__fg_color 248) \w "
+
+    local stat
+    if stat=$(__parse_git_branch); then
+        printf "%s" "${stat} "
+    fi
+
+    printf "%s" "${RESET_BG}$(__fg_color 241)${sep}"
+    printf "%s" "${RESET}${RESET_BG}\n"
+}
+
+__prompt() {
+    PS1="$(__prompt_ps1)"
+}
+
+# prompt taken from https://github.com/Airblader/dotfiles-manjaro
+#if [[ ! "$PROMPT_COMMAND" == *__prompt* ]]; then
+#    case $(tty) in
+#        /dev/tty[0-9]*)
+#            ;;
+#        *)
+#            PROMPT_COMMAND='__prompt;'$'\n'"$PROMPT_COMMAND" ;;
+#    esac
+#fi
+
+# powerline-shell prompt
+_update_ps1() {
+    PS1=$(powerline-shell $?)
+}
+
+if [[ $TERM != linux && ! $PROMPT_COMMAND =~ _update_ps1 ]]; then
+    PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+fi
+
+shell=$(ps -o args= -p "$$")
+if [[ "$shell" == "zsh" ]]; then
+    PROMPT="$(__prompt)"
+fi
