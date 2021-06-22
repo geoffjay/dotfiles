@@ -1,0 +1,19 @@
+{{ .GenHeader }}
+
+# docker command aliases
+alias d='docker'
+alias di='d inspect'
+alias dl='d ps -l -q'
+alias dp='d pull'
+alias dps='d ps -a'
+
+# helpful helpers
+alias d-rm='d rm $(d kill $(d ps -q))'
+alias d-rmi='d rmi $(d images -q)'
+alias d-nm='di `dl` | jq -r ".[0].HostConfig.NetworkMode"'
+alias d-ip='di `dl` | jq -r ".[0].NetworkSettings.Networks.$(d-nm).IPAddress"'
+alias d-mac='di `dl` | jq -r ".[0].NetworkSettings.Networks.$(d-nm).MacAddress"'
+
+# docker-machine stuff
+alias docker-machine-box='eval "$(docker-machine env box)"'
+alias docker-machine-unset='eval "$(docker-machine env -u)"'
