@@ -1,0 +1,25 @@
+! .Xresources
+
+! 64: small, 96: medium, 128: large
+!Xft.dpi: 64
+Xft.dpi: 96
+!Xft.dpi: 112
+!Xft.dpi: 128
+!Xft.dpi: 144
+!Xft.dpi: 160
+!Xft.dpi: 192
+! Type of subpixel antialiasing (none, rgb, bgr, vrgb or vbgr)
+Xft.rgba: rgba
+Xft.lcdfilter: lcddefault
+Xft.antialias: 1
+Xft.hinting: 1
+Xft.autohint: 0
+! What degree of hinting to use (hintnone, hintslight, hintmedium, or hintfull)
+Xft.hintstyle: hintfull
+
+! TODO: add a cursor theme?
+! TODO: load color first and use in other includes
+
+#include ".Xresources.d/urxvt"
+#include ".Xresources.d/color"
+#include ".Xresources.d/rofi"

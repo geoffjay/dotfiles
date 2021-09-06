@@ -1,0 +1,14 @@
+; vim:ft=cfg
+
+type                 = custom/script
+exec                 = ~/.config/polybar/scripts/updates-arch.sh
+interval             = 600
+format-prefix        = " "
+format-padding-left  = 2
+format-padding-right = 1
+format-background    = ${colors.updates_bg}
+format-overline      = ${colors/gruvbox.color13}
+label-padding-left   = 1
+label-padding-right  = 1
+label-background     = ${colors.updates_bg}
+label-overline       = ${colors/gruvbox.color13}

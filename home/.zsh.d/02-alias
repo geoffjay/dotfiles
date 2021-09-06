@@ -1,0 +1,38 @@
+# vim:ft=zsh:set ts=2 sw=2:
+
+LS_OPTIONS="-F -v --group-directories-first --color=auto --time-style=+\"%d.%m.%Y %H:%M\""
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  alias ls="ls ${LS_OPTIONS}"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  alias ls="gls ${LS_OPTIONS}"
+fi
+
+alias l="ls ${LS_OPTIONS} -l"
+alias ll="ls ${LS_OPTIONS} -l"
+alias la="ls ${LS_OPTIONS} -la"
+
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+
+alias grep="grep --color=tty -d skip"
+alias egrep="egrep --color=tty -d skip"
+
+alias pc="ps -fC"
+alias px="ps aux"
+alias killz="kill -KILL"
+alias cp="cp -i"                          # confirm before overwriting something
+alias df="df -h"                          # human-readable sizes
+alias du="du -h"
+alias dux="du -hx --max-depth=1"
+alias free="free -m"                      # show sizes in MB
+
+# fat fingers
+alias mkae="make"
+alias ivm="vim"
+
+logcmd() {
+    echo -e "\e[91m$@\e[0m"
+    "$@"
+}

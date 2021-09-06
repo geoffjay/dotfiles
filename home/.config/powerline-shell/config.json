@@ -1,0 +1,27 @@
+{
+  "segments": [
+    "virtual_env",
+    {
+      "type": "stdout",
+      "command": ["echo", "-e", "\uF303"],
+      "fg_color": 24,
+      "bg_color": 250
+    },
+    "username",
+    "ssh",
+    "cwd",
+    "git",
+    "git_stash",
+    "jobs",
+    "set_term_title",
+    "root"
+  ],
+  "mode": "patched",
+  "cwd": {
+    "mode": "plain",
+    "max_depth": 3
+  },
+  "time": {
+  },
+  "theme": "~/.config/powerline-shell/themes/nord.py"
+}

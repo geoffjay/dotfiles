@@ -81,14 +81,14 @@ func getTemplateDir() string {
 }
 
 func help() {
-	log.Println("do the right thing")
+	log.Fatal("`help' has not been implemented yet, see the docs")
 }
 
 func check(env *DotEnv) {
 	if env == nil {
-		panic("check needs environment")
+		panic("`check' needs environment")
 	}
-	log.Println("check")
+	log.Fatal("`check' has not been implemented yet")
 }
 
 func update(env *DotEnv) {
@@ -97,7 +97,7 @@ func update(env *DotEnv) {
 	var config Config
 
 	if env == nil {
-		log.Fatal("update needs environment")
+		log.Fatal("`update' needs environment")
 	}
 
 	if data, err = ioutil.ReadFile(filepath.Join(env.TemplateDir, "dotfiles.yml")); err != nil {

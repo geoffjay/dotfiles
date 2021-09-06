@@ -1,0 +1,24 @@
+; vim:ft=cfg
+
+type                      = internal/xworkspaces
+pin-workspaces            = true
+enable-click              = false
+enable-scroll             = false
+format                    = <label-state>
+label-monitor             = %name%
+label-active              = %icon%%name%
+label-active-foreground   = ${colors.obfg}
+label-active-background   = ${colors.obbg}
+label-active-underline    = #fba922
+label-active-padding      = 1
+label-occupied            = %name%
+label-occupied-background = ${colors.obbg}
+label-occupied-padding    = 1
+label-urgent              = %index%
+label-urgent-foreground   = #000000
+label-urgent-background   = #bd2c40
+label-urgent-underline    = #9b0a20
+label-empty               = %name%
+label-empty-padding       = 1
+label-empty-background    = ${colors.obibg}
+label-empty-foreground    = ${colors.obifg}

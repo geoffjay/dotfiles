@@ -1,0 +1,4 @@
+rofi.combi-modi: window,drun,ssh
+rofi.theme:      ~/.config/rofi/themes/gruvbox-sidebar
+rofi.font:       hack 14
+rofi.modi:       combi

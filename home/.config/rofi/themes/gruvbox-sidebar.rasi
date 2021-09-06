@@ -1,0 +1,175 @@
+/**
+ * Modified sidebar theme.
+ **/
+
+* {
+    darkred:            rgba ( 204, 36, 29, 100 % );
+    darkgreen:          rgba ( 152, 151, 26, 100 % );
+    darkyellow:         rgba ( 215, 153, 33, 100 % );
+    darkblue:           rgba ( 69, 133, 136, 100 % );
+    darkmagenta:        rgba ( 177, 98, 134, 100 % );
+    darkcyan:           rgba ( 104, 157, 106, 100 % );
+    lightgray:          rgba ( 168, 153, 132, 100 % );
+    darkgray:           rgba ( 40, 40, 40, 100 % );
+    red:                rgba ( 251, 73, 52, 100 % );
+    green:              rgba ( 184, 187, 38, 100 % );
+    yellow:             rgba ( 250, 189, 47, 100 % );
+    blue:               rgba ( 131, 165, 152, 100 % );
+    magenta:            rgba ( 211, 134, 155, 100 % );
+    cyan:               rgba ( 142, 192, 124, 100 % );
+    white:              rgba ( 235, 219, 178, 100 % );
+
+    /**
+     * text-color:       rgba ( 255, 238, 221, 100 % );
+     * dark:             rgba ( 28, 28, 28, 100 % );
+     * black:            rgba ( 61, 53, 42, 100 % );
+     * red:              rgba ( 205, 92, 92, 100 % );
+     * green:            rgba ( 134, 175, 128, 100 % );
+     * blue:             rgba ( 100, 149, 237, 100 % );
+     * cyan:             rgba ( 176, 196, 222, 100 % );
+     * magenta:          rgba ( 222, 184, 135, 100 % );
+     * white:            rgba ( 187, 170, 153, 100 % );
+     * yellow:           rgba ( 232, 174, 91, 100 % );
+     * lightgreen:       rgba ( 136, 204, 34, 100 % );
+     * lightred:         rgba ( 204, 85, 51, 100 % );
+     * lightmagenta:     rgba ( 153, 102, 0, 100 % );
+     * lightblack:       rgba ( 85, 68, 68, 100 % );
+     * lightblue:        rgba ( 135, 206, 235, 100 % );
+     * lightwhite:       rgba ( 221, 204, 187, 100 % );
+     * lightyellow:      rgba ( 255, 167, 93, 100 % );
+     * lightcyan:        rgba ( 176, 196, 222, 100 % );
+     **/
+
+    background-trans:   rgba ( 40, 40, 40, 50 % );
+    background-color:   rgba ( 0, 0, 0, 0 % );
+    foreground-color:   rgba ( 235, 219, 178, 100 % );
+    highlight:          bold rgba ( 235, 219, 178, 100 % );
+
+    background:                  rgba ( 40, 40, 40, 50 % );
+    foreground:                  @white;
+    normal-background:           @background-color;
+    normal-foreground:           @foreground;
+    urgent-background:           @darkred;
+    urgent-foreground:           @lightgray;
+    active-background:           @green;
+    active-foreground:           @white;
+    alternate-normal-background: @background-color;
+    alternate-normal-foreground: @foreground;
+    alternate-urgent-background: @darkred;
+    alternate-urgent-foreground: @lightgray;
+    alternate-active-background: @green;
+    alternate-active-foreground: @white;
+    selected-normal-foreground:  @white;
+}
+
+/* Window layout */
+
+#window {
+    fullscreen:  true;
+    orientation: horizontal;
+    location:    west;
+    anchor:      west;
+    border:      0px 2px 0px 0px;
+    text-color:  @white;
+    children:    [ mainbox,dummy ];
+}
+
+#mainbox {
+    background-color: @background;
+    expand:           false;
+    spacing:          1.0000em;
+}
+
+#dummy {
+    expand: true;
+}
+
+#sidebar {
+    padding: 10px;
+    border:  2px 0px 0px;
+}
+
+#button.selected {
+    border-color: @green;
+    text-color:   @white;
+}
+
+#inputbar {
+    padding:          4px;
+    border:           0px 0px 2px;
+    background-color: @white;
+    text-color:       @darkgray;
+    children:         [ prompt,textbox-prompt-colon,entry,case-indicator ];
+}
+
+#entry {
+    width: 20.0000em;
+}
+
+#listview {
+    padding: 0.0000em 1.0000em 1.0000em 1.0000em;
+    dynamic: false;
+    lines:   0;
+}
+
+#textbox-prompt-colon {
+    margin:     0px 0.3000em 0.0000em 0.0000em;
+    expand:     false;
+    str:        ":";
+    text-color: @white;
+}
+
+/* Elements */
+
+#element {
+    border:  0;
+    padding: 5px;
+    //font: @monospace;
+}
+
+#element.normal.normal {
+    background-color: @normal-background;
+    text-color:       @normal-foreground;
+}
+
+#element.normal.urgent {
+    background-color: @urgent-background;
+    text-color:       @urgent-foreground;
+}
+
+#element.normal.active {
+    background-color: @active-background;
+    text-color:       @active-foreground;
+}
+
+#element.selected.normal {
+    border:           0px 0px 2px 0px;
+    border-color:     @lightgray;
+    background-color: @darkgreen;
+    text-color:       @white;
+}
+
+#element.selected.active {
+    background-color: @green;
+    text-color:       @darkgray;
+}
+
+#element.selected.urgent {
+    background-color: @red;
+    text-color:       @lightgray;
+}
+
+#element.alternate.normal {
+    background-color: @alternate-normal-background;
+    text-color:       @alternate-normal-foreground;
+}
+
+#element.alternate.urgent {
+    background-color: @alternate-urgent-background;
+    text-color:       @alternate-urgent-foreground;
+}
+
+#element.alternate.active {
+    background-color: @alternate-active-background;
+    text-color:       @alternate-active-foreground;
+}

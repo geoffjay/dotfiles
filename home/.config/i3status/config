@@ -1,0 +1,178 @@
+# It is important that this file is edited as UTF-8.
+# The following line should contain a sharp s:
+# ß
+# If the above line is not correctly displayed, fix your editor first!
+# Icons from https://fontawesome.com/
+
+py3status {
+    nagbar_font = 'pango:Hack Mono 13'
+}
+
+#set $bg         #282828
+#set $red        #cc241d
+#set $green      #98971a
+#set $yellow     #d79921
+#set $blue       #458588
+#set $purple     #b16286
+#set $aqua       #689d68
+#set $gray       #a89984
+#set $darkgray   #1d2021
+
+general {
+    colors = true
+    #interval = 1
+    color = "#d79921"
+    color_good = "#d79921"
+    color_bad = "#cc241d"
+    color_degraded = "#b16286"
+    #output_format = "i3bar"
+}
+
+# TODO: add spotify
+# TODO: add gmail
+# TODO: add github
+# TODO: add gitlab
+# TODO: add redmine
+# TODO: add lm_sensors
+# TODO: add taskwarrior (?)
+# TODO: add arch updates
+# TODO: add vpn
+# TODO: add yubikey
+
+order += "group storage_frames"
+order += "group network_frames"
+order += "group laptop_frames"
+order += "volume master"
+order += "tztime local"
+
+group storage_frames {
+    background = "#cc241d"
+    color = "#98971a"
+    click_mode = "button"
+    separator = False
+    open = False
+    format = "{output}{button}"
+    format_closed = "storage {button}"
+    format_button_open = ""
+    format_button_closed = ""
+
+    frame storage {
+        # run nautilus on click
+        disk "/" {
+            format = " / %free "
+            separator = False
+            on_click 1 = "exec nautilus /"
+        }
+
+        disk "/home" {
+            format = " /home %free "
+            separator = False
+            on_click 1 = "exec nautilus /home"
+        }
+
+        disk "/mnt/smb/clients" {
+            format = " clients %free "
+            separator = False
+            on_click 1 = "exec nautilus /mnt/smb/clients"
+        }
+
+        dropboxd_status {
+            color_good = "#98971a"
+            color_bad = "#cc241d"
+            color_degraded = "#b16286"
+            separator = False
+            format = " {status}"
+        }
+    }
+}
+
+group network_frames {
+    click_mode = "button"
+    separator = False
+    format = "{output}{button}"
+    format_closed = "network {button}"
+    format_button_open = ""
+    format_button_closed = ""
+
+    frame network {
+        # run wicd-gtk GUI when I left click on the i3status ethernet module
+        # and kill it when I right click on it
+        ethernet enp0s20f0u5u7 {
+            format_up = " %ip"
+            format_down = ""
+            separator = False
+            on_click 1 = "exec wicd-gtk"
+            on_click 3 = "exec killall wicd-gtk"
+        }
+
+        ethernet wlp59s0 {
+            format_up = " %ip"
+            format_down = ""
+            separator = False
+            on_click 1 = "exec wicd-gtk"
+            on_click 3 = "exec killall wicd-gtk"
+        }
+
+        ethernet ens20u1u2 {
+            format_up = " %ip"
+            format_down = ""
+            separator = False
+            on_click 1 = "exec wicd-gtk"
+            on_click 3 = "exec killall wicd-gtk"
+        }
+
+        # show the status of vpn service
+        # left click to start, right click to stop
+        #systemd vpn {
+        #    separator = False
+        #    unit = 'vpn.service'
+        #    on_click 1 = 'exec sudo systemctl start vpn'
+        #    on_click 3 = 'exec sudo systemctl stop vpn'
+        #}
+    }
+}
+
+group laptop_frames {
+    color = "#98971a"
+    click_mode = "button"
+    separator = False
+    format = "{output}{button}"
+    format_closed = "system {button}"
+    format_button_open = ""
+    format_button_closed = ""
+
+    frame laptop {
+        load {
+            separator = False
+            format = " %1min "
+        }
+
+        battery_level {
+            separator = False
+            format = " {percent}%"
+            color_good = "#98971a"
+            color_bad = "#cc241d"
+            color_degraded = "#d79921"
+            color_charging = "#458588"
+        }
+    }
+}
+
+volume master {
+    separator = False
+    format = " %volume"
+    format_muted = ""
+    device = "default"
+    mixer = "Master"
+    mixer_idx = 0
+    on_click 1 = "exec i3-sensible-terminal -e alsamixer"
+    on_click 2 = "exec amixer set Master toggle"
+    on_click 3 = "exec killall alsamixer"
+    on_click 4 = "exec amixer set Master 1+"
+    on_click 5 = "exec amixer set Master 1-"
+}
+
+tztime local {
+    color = "#b16286"
+    format = " %I:%M %P "
+}

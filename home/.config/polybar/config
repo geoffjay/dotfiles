@@ -1,0 +1,488 @@
+; vim:ft=cfg
+
+; TODO: use format-prefix to give icons different color
+
+; Gruvbox colors
+; *color0:  #282828 ! Black
+; *color1:  #cc241d ! DarkRed
+; *color2:  #98971a ! DarkGreen
+; *color3:  #d79921 ! DarkYellow
+; *color4:  #458588 ! DarkBlue
+; *color5:  #b16286 ! DarkMagenta
+; *color6:  #689d6a ! DarkCyan
+; *color7:  #a89984 ! LightGrey
+; *color8:  #928374 + DarkGrey
+; *color9:  #fb4934 + Red
+; *color10: #b8bb26 + Green
+; *color11: #fabd2f + Yellow
+; *color12: #83a598 + Blue
+; *color13: #d3869b + Magenta
+; *color14: #8ec07c + Cyan
+; *color15: #ebdbb2 + White
+
+[colors/gruvbox]
+color0  = #00000000
+color1  = #ddcc241d
+color2  = #dd98971a
+color3  = #ddd79921
+color4  = #dd458588
+color5  = #ddb16286
+color6  = #dd689d6a
+color7  = #dda89984
+color8  = #dd928374
+color9  = #ddfb4934
+color10 = #ddb8bb26
+color11 = #ddfabd2f
+color12 = #dd83a598
+color13 = #ddd3869b
+color14 = #dd8ec07c
+color15 = #ddebdbb2
+black   = #00282828
+white   = #ddebdbb2
+green_trans = #11b8bb26
+magenta_trans = #11d3869b
+
+[colors]
+bar_bg            = ${colors/gruvbox.black}
+bar_fg            = ${colors/gruvbox.white}
+border_col        = ${xrdb:color0}
+modules_bg        = ${colors/gruvbox.black}
+modules_fg        = ${xrdb:color0}
+mod_bg            = ${colors/gruvbox.black}
+modules_prefix_bg = ${xrdb:color7}
+modules_prefix_fg = ${xrdb:color0}
+urgent_bg         = ${xrdb:color1}
+focused_bg        = ${xrdb:color10}
+essid_p_bg        = ${xrdb:color6}
+down_p_bg         = #5e606c
+cpu_p_bg          = ${xrdb:color5}
+ram_p_bg          = ${xrdb:color11}
+vol_p_bg          = #637b81
+bright_p_bg       = #c29f6f
+battery_p_bg      = ${xrdb:color9}
+time_p_bg         = ${xrdb:color10}
+updates_bg        = ${colors/gruvbox.magenta_trans}
+essid_bg          = ${colors/gruvbox.green_trans}
+
+;
+; Common settings
+;
+
+[settings]
+throttle-output        = 5
+throttle-output-for    = 10
+throttle-input-for     = 30
+screenchange-reload    = true
+compositing-background = over
+compositing-foreground = over
+compositing-overline   = over
+compositing-underline  = over
+compositing-border     = over
+format-foreground      =
+format-background      =
+format-underline       =
+format-overline        =
+format-spacing         =
+format-padding         =
+format-margin          =
+format-offset          =
+
+;
+; Bars
+;
+
+[bar/base]
+background = ${colors.bar_bg}
+foreground = ${colors.bar_fg}
+
+[bar/laptop]
+inherit            = bar/base
+dpi                = 192
+width              = 100%
+height             = 32
+offset-x           = 0
+offset-y           = 0
+bottom             = true
+border-bottom-size = 0
+border-top-size    = 0
+border-left-size   = 0
+border-right-size  = 0
+border-bottom-color = #ff000000 ;${colors.modules_bg}
+border-top-color    = #ff000000 ;${colors/gruvbox.color10}
+border-left-color   = #ff000000 ;${colors.modules_bg}
+border-right-color  = #ff000000 ;${colors.modules_bg}
+spacing            = 0
+padding-left       = 0
+padding-right      = 0
+module-margin-left = 0
+line-size          = 3
+font-0             = Inconsolata Nerd Font:size=5;2
+font-1             = Fantasque Sans Mono:pixelsize=10;1
+font-2             = Hack Nerd Font:pixelsize=6;1
+font-3             = Font Awesome 5 Free:pixelsize=10;3
+font-4             = Font Awesome 5 Free Solid:pixelsize=4;3
+font-5             = Font Awesome 5 Brands:pixelsize=4;3
+;font-6 = Source Code Pro:style=Medium:antialias=true:pixelsize=8;1
+;font-7 = Font Awesome 5 Free:style=Solid:antialias=true:pixelsize=8;1
+modules-left       = xwindow
+modules-center     = workspaces
+modules-right      = updates essid network battery volume date
+fixed-center       = true
+monitor            = eDP1
+
+[bar/top1k]
+include-file = ~/.config/polybar/bars/top1k
+
+[bar/top2k]
+include-file = ~/.config/polybar/bars/top2k
+
+[bar/top4k]
+include-file = ~/.config/polybar/bars/top4k
+
+;
+; modules
+;
+
+[module/xwindow]
+y-offset         = 10
+type             = internal/xwindow
+format           = <label>
+label            = " %title:0:50:%"
+label-padding    = 2
+label-overline   = ${colors/gruvbox.white}
+label-background = ${colors/gruvbox.black}
+
+[module/date]
+type               = internal/date
+interval           = 1.0
+time               = "%a %H:%M:%S"
+label              = " %time%"
+format             = <label>
+format-padding     = 0
+label-background   = ${colors.modules_bg}
+label-foreground   = ${colors/gruvbox.color7}
+label-padding      = 1
+label-padding-left = 2
+label-overline     = ${colors/gruvbox.color15}
+
+[module/previous]
+type               = custom/text
+content            = " "
+content-background = ${colors.modules_bg}
+content-foreground = ${colors/gruvbox.color7}
+content-padding    = 0
+click-left         = mpc prev
+
+[module/playpause]
+type             = custom/script
+exec             = sh ~/.config/polybar/scripts/playpause.sh
+interval         = 1
+label            = %output%
+label-background = ${colors.modules_bg}
+label-foreground = ${colors/gruvbox.color7}
+label-padding    = 1
+click-left       = mpc toggle
+
+[module/next]
+type               = custom/text
+content            = " "
+content-background = ${colors.modules_bg}
+content-foreground = ${colors/gruvbox.color7}
+content-padding    = 0
+click-left         = mpc next
+
+[module/music]
+type                         = internal/mpd
+host                         = 127.0.0.1
+port                         = 6600
+interval                     = 2
+format-online                = <label-song>
+label-song                   = "%artist% - %title% "
+label-song-padding           = 0
+label-song-background        = ${colors.modules_bg}
+label-song-foreground        = ${colors/gruvbox.color7}
+format-online-prefix-padding = 0
+
+[module/battery]
+type                            = internal/battery
+full-at                         = 98
+battery                         = BAT0
+adapter                         = AC0
+poll-interval                   = 5
+format-charging                 = <label-charging>
+label-charging                  = " %percentage%%"
+label-charging-padding-left     = 2
+label-charging-padding-right    = 2
+label-charging-background       = ${colors.modules_bg}
+label-charging-foreground       = ${colors/gruvbox.color7}
+label-charging-padding          = 1
+label-charging-overline         = ${colors/gruvbox.color12}
+format-discharging              = <label-discharging>
+label-discharging               = " %percentage%%"
+label-discharging-padding-left  = 2
+label-discharging-padding-right = 2
+label-discharging-background    = ${colors.modules_bg}
+label-discharging-foreground    = ${colors/gruvbox.color7}
+label-discharging-padding       = 1
+label-discharging-overline      = ${colors/gruvbox.color13}
+format-full                     = <label-full>
+label-full                      = " %percentage%%"
+label-full-padding-left         = 2
+label-full-padding-right        = 2
+label-full-background           = ${colors.modules_bg}
+label-full-foreground           = ${colors/gruvbox.color7}
+label-full-padding              = 1
+label-full-overline             = ${colors/gruvbox.color10}
+
+[module/volume]
+type                       = internal/pulseaudio
+format-volume              = <label-volume>
+mapped                     = true
+label-volume               = " %percentage%%"
+label-volume-padding-left  = 2
+label-volume-padding-right = 2
+label-volume-background    = ${colors.modules_bg}
+label-volume-foreground    = ${colors/gruvbox.color7}
+label-volume-padding       = 1
+label-volume-overline      = ${colors/gruvbox.color12}
+format-muted               = <label-muted>
+label-muted                = " 0% (muted)"
+label-muted-padding-left   = 2
+label-muted-padding-right  = 2
+label-muted-background     = ${colors.modules_bg}
+label-muted-foreground     = ${colors/gruvbox.color7}
+label-muted-padding        = 1
+label-muted-overline       = ${colors/gruvbox.color13}
+format-volume-padding      = 0
+format-muted-padding       = 0
+ramp-headphones-0          = 
+
+[module/cpu]
+type                     = internal/cpu
+interval                 = 0.5
+format                   = <label>
+label                    = " %percentage%%"
+label-background         = ${colors.modules_bg}
+label-foreground         = ${colors.modules_fg}
+label-padding            = 1
+format-prefix            = 
+format-prefix-padding    = 1
+format-prefix-background = ${colors.cpu_p_bg}
+format-prefix-foreground = ${colors.modules_prefix_fg}
+
+[module/ram]
+type                     = internal/memory
+interval                 = 3
+format                   = <label>
+label                    = " %percentage_used%%"
+label-background         = ${colors.modules_bg}
+label-foreground         = ${colors.modules_fg}
+label-padding            = 1
+format-prefix            = 
+format-prefix-padding    = 1
+format-prefix-background = ${colors.ram_p_bg}
+format-prefix-foreground = ${colors.modules_prefix_fg}
+
+[module/network]
+type                              = internal/network
+interface                         = wlp59s0
+ping-interval                     = 3
+format-connected-overline         = ${colors/gruvbox.color4}
+format-disconnected-overline      = ${colors/gruvbox.color4}
+label-connected-overline          = ${colors/gruvbox.color4}
+label-disconnected-overline       = ${colors/gruvbox.color4}
+format-connected                  = <ramp-signal> <label-connected>
+format-disconnected               = <label-disconnected>
+format-packetloss                 = <animation-packetloss> <label-connected>
+label-connected                   = %ifname% %local_ip% %downspeed:9%
+label-connected-background        = ${colors.modules_bg}
+label-connected-foreground        = ${colors/gruvbox.color7}
+label-disconnected                = not connected
+label-disconnected-background     = ${colors.modules_bg}
+label-disconnected-foreground     = ${colors/gruvbox.color7}
+ramp-signal-0                     = 😱
+ramp-signal-1                     = 😠
+ramp-signal-2                     = 😒
+ramp-signal-3                     = 😊
+ramp-signal-4                     = 😃
+ramp-signal-5                     = 😈
+animation-packetloss-0            = ⚠
+animation-packetloss-0-foreground = ${colors/gruvbox.color15}
+animation-packetloss-1            = 📶
+animation-packetloss-1-foreground = ${colors/gruvbox.color15}
+animation-packetloss-framerate    = 500
+
+[module/essid]
+inherit                                 = module/network
+format-connected                        = <label-connected>
+format-connected-prefix                 = ""
+format-connected-prefix-padding         = 1
+format-connected-prefix-padding-left    = 1
+format-connected-prefix-background      = ${colors.essid_bg}
+format-connected-prefix-foreground      = ${colors/gruvbox.color3}
+format-connected-overline               = ${colors/gruvbox.color14}
+label-connected                         = "%essid%"
+label-connected-background              = ${colors.essid_bg}
+label-connected-foreground              = ${colors/gruvbox.color7}
+label-connected-padding                 = 1
+label-connected-padding-right           = 1
+label-connected-overline                = ${colors/gruvbox.color14}
+ramp-signal-background                  = ${colors.essid_bg}
+ramp-signal-foreground                  = ${colors/gruvbox.color7}
+ramp-connected-foreground               = ${colors/gruvbox.color7}
+ramp-signal-padding                     = 1
+format-disconnected                     = <label-disconnected>
+format-disconnected-prefix              = ""
+format-disconnected-prefix-padding      = 1
+format-disconnected-prefix-padding-left = 1
+format-disconnected-prefix-background   = ${colors.essid_bg}
+format-disconnected-prefix-foreground   = ${colors/gruvbox.color3}
+format-disconnected-overline            = ${colors/gruvbox.color14}
+label-disconnected                      = "n/a"
+label-disconnected-background           = ${colors.essid_bg}
+label-disconnected-foreground           = ${colors/gruvbox.color7}
+label-disconnected-padding              = 1
+label-disconnected-padding-right        = 1
+label-disconnected-overline             = ${colors/gruvbox.color9}
+
+[module/down]
+inherit                            = module/network
+format-connected                   = <label-connected>
+format-connected-prefix            = 
+format-connected-prefix-background = ${colors.down_p_bg}
+format-connected-prefix-foreground = ${colors.modules_prefix_fg}
+format-connected-prefix-padding    = 1
+label-connected                    = %{T2}%downspeed:7%%{T-}
+label-connected-background         = ${colors.modules_bg}
+label-connected-foreground         = ${colors.modules_fg}
+label-connected-padding-right      = 1
+
+[module/padding]
+type               = custom/text
+content            = |
+content-padding    = 2
+content-foreground = ${colors/gruvbox.color7}
+content-background = ${colors.modules_bg}
+
+[module/paddinglite]
+type               = custom/text
+content            = ||
+content-padding    = 30
+content-foreground = #000f0f0f
+content-background = #000f0f0f
+
+[module/workspaces]
+type                       = internal/i3
+format                     = <label-state> <label-mode>
+index-sort                 = true
+wrapping-scroll            = false
+strip-wsnumbers            = true
+ws-icon-0                  = 1;
+ws-icon-1                  = 2;
+ws-icon-2                  = 3;
+ws-icon-3                  = 4;
+ws-icon-4                  = 5;
+ws-icon-5                  = 6;
+ws-icon-6                  = 7;
+ws-icon-7                  = 8;
+ws-icon-8                  = 9;
+ws-icon-9                  = 10;
+ws-icon-default            = 
+label-mode-background      = ${colors.modules_bg}
+label-mode-foreground      = ${colors/gruvbox.color7}
+label-mode-padding         = 2
+label-focused              = %name% %icon%
+label-focused-background   = ${colors/gruvbox.color7}
+label-focused-foreground   = ${colors.modules_bg}
+label-focused-padding      = 2
+label-focused-overline     = ${colors/gruvbox.color10}
+label-unfocused            = %icon%
+label-unfocused-background = ${colors.modules_bg}
+label-unfocused-foreground = ${colors/gruvbox.color7}
+label-unfocused-padding    = 2
+label-unfocused-overline   = ${colors/gruvbox.color11}
+label-visible              = %icon%
+label-visible-background   = ${colors.modules_bg}
+label-visible-foreground   = ${colors/gruvbox.color7}
+label-visible-padding      = 2
+label-visible-overline     = ${colors/gruvbox.color12}
+label-urgent               = %name% %icon%
+label-urgent-background    = ${colors/gruvbox.color7}
+label-urgent-foreground    = ${colors/gruvbox.color1}
+label-urgent-padding       = 2
+label-urgent-overline      = ${colors/gruvbox.color9}
+pin-workspaces             = true
+
+[module/mon4k]
+type                       = internal/i3
+format                     = <label-state> <label-mode>
+index-sort                 = true
+wrapping-scroll            = false
+strip-wsnumbers            = true
+ws-icon-0                  = 1;
+ws-icon-1                  = 2;
+ws-icon-2                  = 3;
+ws-icon-3                  = 4;
+ws-icon-4                  = 5;
+ws-icon-5                  = 6;
+ws-icon-6                  = 7;
+ws-icon-7                  = 8;
+ws-icon-8                  = 9;
+ws-icon-9                  = 10;
+ws-icon-default            = 
+label-mode-background      = ${colors.modules_bg}
+label-mode-foreground      = ${colors/gruvbox.color7}
+label-mode-padding         = 2
+label-focused              = %name% %icon%
+label-focused-background   = ${colors.modules_bg}
+label-focused-foreground   = ${colors/gruvbox.color2}
+label-focused-padding      = 2
+label-focused-underline    = ${colors/gruvbox.color10}
+label-unfocused            = %icon%
+label-unfocused-background = ${colors.modules_bg}
+label-unfocused-foreground = ${colors/gruvbox.color7}
+label-unfocused-padding    = 2
+label-unfocused-underline  = ${colors/gruvbox.color11}
+label-visible              = %icon%
+label-visible-background   = ${colors.modules_bg}
+label-visible-foreground   = ${colors/gruvbox.color7}
+label-visible-padding      = 2
+label-visible-underline    = ${colors/gruvbox.color12}
+label-urgent               = %name% %icon%
+label-urgent-background    = ${colors/gruvbox.color7}
+label-urgent-foreground    = ${colors/gruvbox.color1}
+label-urgent-padding       = 2
+label-urgent-underline     = ${colors/gruvbox.color9}
+pin-workspaces             = true
+
+[module/openbox]
+include-file = ~/.config/polybar/modules/openbox
+
+[module/backlight]
+include-file = ~/.config/polybar/modules/backlight
+
+[module/updates]
+include-file = ~/.config/polybar/modules/updates
+
+;
+; Menus
+;
+
+[module/menu-apps]
+label-open      = x
+label-close     = c
+label-separator = |
+type            = custom/menu
+expand-right    = true
+menu-0-0        = Browsers
+menu-0-0-exec   = menu-open-1
+menu-0-1        = Multimedia
+menu-0-1-exec   = menu-open-2
+menu-1-0        = Firefox
+menu-1-0-exec   = firefox &
+menu-1-1        = Chromium
+menu-1-1-exec   = chromium &
+menu-2-0        = Gimp
+menu-2-0-exec   = gimp &
+menu-2-1        = Scrot
+menu-2-1-exec   = scrot &

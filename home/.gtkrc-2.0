@@ -1,0 +1,9 @@
+gtk-icon-theme-name = "Zafiro"
+gtk-theme-name = "Nordic"
+gtk-font-name = "Cantarell 11"
+gtk-enable-event-sounds = 0
+gtk-enable-input-feedback-sounds = 0
+gtk-xft-antialias = 1
+gtk-xft-hinting = 1
+gtk-xft-hintstyle = "hintslight"
+gtk-xft-rgba = "rgb"

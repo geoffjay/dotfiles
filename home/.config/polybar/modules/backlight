@@ -1,0 +1,15 @@
+; vim:ft=cfg
+
+type                     = internal/backlight
+output                   = LVDS-1
+card                     = acpi_video0
+enable-scroll            = false
+format                   = <label>
+format-prefix            = 
+format-prefix-padding    = 1
+format-prefix-background = ${colors.cpu_p_bg}
+format-prefix-foreground = ${colors.modules_prefix_fg}
+label                    = %percentage%%
+label-background         = ${colors.modules_bg}
+label-foreground         = ${colors.modules_fg}
+label-padding            = 1
