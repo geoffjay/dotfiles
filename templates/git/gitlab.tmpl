@@ -1,5 +1,5 @@
-{{ .GenHeader }}
+{{ .WriteHeader "sh" }}
 
 [gitlab]
-    username = geoff.jay
+    username = {{ .User.GitlabUser }}
     token = ""

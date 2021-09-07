@@ -14,11 +14,19 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type user struct {
+	UserName   string
+	FullName   string
+	Email      string
+	GithubUser string
+	GitlabUser string
+}
+
 type DotEnv struct {
-	GenHeader   string
-	OS          string
 	AllowRootX  bool
+	OS          string
 	TemplateDir string
+	User        *user
 }
 
 type DotFile struct {
@@ -30,20 +38,37 @@ type Config struct {
 	Dotfiles []DotFile
 }
 
-func NewDotEnv() *DotEnv {
-	// TODO: figure out modeline for different filetypes
+func (u *user) HasGithub() bool {
+	return len(u.GithubUser) > 0
+}
+
+func (u *user) HasGitlab() bool {
+	return len(u.GitlabUser) > 0
+}
+
+func (d *DotEnv) WriteHeader(filetype string) string {
 	elements := []string{
-		"# vim: set ts=2 sw=2 :",
-		"# vim: set ft=sh",
+		"# vim:set ts=2 sw=2:",
+		fmt.Sprintf("# vim:set ft=%s", filetype),
 		"# Auto generated file, do not edit!",
 		fmt.Sprintf("# Updated at %s", time.Now()),
 	}
-	header := strings.Join(elements, "\n")
+	return strings.Join(elements, "\n")
+}
+
+func NewDotEnv() *DotEnv {
+	// TODO: user should be read from config
 	return &DotEnv{
-		OS:          runtime.GOOS,
-		GenHeader:   header,
 		AllowRootX:  false,
+		OS:          runtime.GOOS,
 		TemplateDir: getTemplateDir(),
+		User: &user{
+			UserName:   os.Getenv("USER"),
+			FullName:   "Geoff Johnson",
+			Email:      "geoff.jay@gmail.com",
+			GithubUser: "geoffjay",
+			GitlabUser: "geoff.jay",
+		},
 	}
 }
 
@@ -122,7 +147,7 @@ func update(env *DotEnv) {
 			err = os.MkdirAll(dir, 0755)
 		}
 
-		if output, err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0644); err != nil {
+		if output, err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644); err != nil {
 			log.Fatal(err)
 		}
 

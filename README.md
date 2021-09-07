@@ -16,5 +16,5 @@ go build -o dotfiles main.go
 
 ```bash
 mkdir output
-HOME=output/ TEMPLATED_DIR=templates/ ./dotfiles update
+HOME=output/ TEMPLATE_DIR=templates/ ./dotfiles update
 ```

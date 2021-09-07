@@ -1,3 +1,7 @@
-{{ .GenHeader }}
+{{ .WriteHeader "sh" }}
 
+{{- if eq .OS "darwin" }}
 export PYTHONPATH="/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg"
+{{- else }}
+# no configuration for {{ .OS }}
+{{- end }}
