@@ -1,0 +1,59 @@
+env:
+  - GO111MODULE=on
+
+before:
+  hooks:
+    - go mod download
+
+builds:
+  -
+    binary: dotfiles
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -tags=release
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm
+    goarm:
+      - 6
+      - 7
+    ignore:
+      - goos: darwin
+        goarm: arm
+
+checksum:
+  name_template: '{{ .ProjectName }}_checksums.txt'
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+    - '^wip:'
+    - Merge pull request
+    - Merge branch
+
+archives:
+  - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    replacements:
+      darwin: Darwin
+      amd64: x86_64
+
+brews:
+  -
+    name: dotfiles
+    tap:
+      owner: geoffjay
+      name: homebrew-tap
+    folder: Formula
+    homepage:  https://github.com/geoffjay/dotfiles
+    description: Developer tooling
+    test: |
+      system "#{bin}/dotfiles version"
+    dependencies:
+    - name: go
