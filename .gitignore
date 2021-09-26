@@ -1,4 +1,8 @@
+*~
+*.sw[op]
 .DS_Store
+
+.env
 
 .idea/
 build/
