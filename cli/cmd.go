@@ -10,8 +10,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// Build is used to control functionality based on build type
 var Build string
 
+// Run executes the main command.
 func Run() {
 	if len(os.Args) == 1 {
 		help()
@@ -29,6 +31,9 @@ func Run() {
 	dotEnv := NewDotEnv(&config.User)
 
 	switch args[0] {
+	case "version":
+		fmt.Println("v0.1.1-beta")
+		os.Exit(0)
 	case "check":
 		checkCmd(cmdArgs, dotEnv, config)
 	case "edit":
@@ -115,7 +120,7 @@ func updateCmd(args []string, env *DotEnv, config *Config) {
 		filename := filepath.Join(os.Getenv("HOME"), dotfile.Output)
 		dir, _ := filepath.Split(filename)
 		if _, err = os.Stat(dir); os.IsNotExist(err) {
-			err = os.MkdirAll(dir, 0755)
+			_ = os.MkdirAll(dir, 0755)
 		}
 
 		if output, err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644); err != nil {
