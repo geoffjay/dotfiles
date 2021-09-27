@@ -11,7 +11,9 @@ builds:
     env:
       - CGO_ENABLED=0
     flags:
-      - -tags=release
+      - -v
+    tags:
+      - release
     goos:
       - darwin
       - linux

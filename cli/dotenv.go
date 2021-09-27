@@ -2,12 +2,12 @@ package cli
 
 import (
 	"fmt"
-	"os"
 	"runtime"
 	"strings"
 	"time"
 )
 
+// DotEnv contains the environment used while processing the templates.
 type DotEnv struct {
 	AllowRootX  bool
 	OS          string
@@ -15,14 +15,8 @@ type DotEnv struct {
 	User        *User
 }
 
-func getTemplateDir() string {
-	dir := os.Getenv("TEMPLATE_DIR")
-	if dir == "" {
-		dir = "templates"
-	}
-	return dir
-}
-
+// WriteHeader generates a header for the template where a filetype can be
+// provided.
 func (d *DotEnv) WriteHeader(filetype string) string {
 	elements := []string{
 		"# vim:set ts=2 sw=2:",
@@ -33,6 +27,8 @@ func (d *DotEnv) WriteHeader(filetype string) string {
 	return strings.Join(elements, "\n")
 }
 
+// NewDotEnv constructs a new instance of a template enviroment for template
+// processing.
 func NewDotEnv(user *User) *DotEnv {
 	// TODO: user should be read from config
 	return &DotEnv{

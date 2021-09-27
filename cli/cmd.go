@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"text/template"
 
+	"github.com/go-git/go-git/v5"
 	"gopkg.in/yaml.v3"
 )
 
@@ -16,7 +17,7 @@ var Build string
 // Run executes the main command.
 func Run() {
 	if len(os.Args) == 1 {
-		help()
+		help([]string{})
 	}
 
 	args := os.Args[1:]
@@ -32,16 +33,18 @@ func Run() {
 
 	switch args[0] {
 	case "version":
-		fmt.Println("v0.1.1-beta")
+		fmt.Println("v0.2.0")
 		os.Exit(0)
 	case "check":
-		checkCmd(cmdArgs, dotEnv, config)
+		checkCmd(dotEnv, config)
 	case "edit":
-		editCmd(cmdArgs, dotEnv, config)
+		editCmd(dotEnv, config)
 	case "init":
-		initCmd(cmdArgs, dotEnv, config)
+		initCmd()
+	case "reset":
+		resetCmd()
 	case "update":
-		updateCmd(cmdArgs, dotEnv, config)
+		updateCmd(dotEnv, config)
 	case "build-type":
 		fmt.Printf("build type: %s\n", Build)
 	case "debug":
@@ -58,11 +61,11 @@ Configuration:
 %+v
 `, os.Getenv("USER"), os.Getenv("HOME"), getTemplateDir(), getConfigDir(), string(yamlConfig))
 	default:
-		help()
+		help(cmdArgs)
 	}
 }
 
-func help() {
+func help(args []string) {
 	usage := `dotfiles is a tool for managing user config.
 
 Usage:
@@ -74,6 +77,7 @@ The commands are:
 	check		test if local changes will be overridden by an update
 	edit		open the $EDITOR to modify dotfile templates
 	init		initialize the configuration environment
+	reset		remove all files that were created by the initialization
 	update		compile the configuration environment from templates
 `
 
@@ -81,32 +85,81 @@ The commands are:
 	os.Exit(1)
 }
 
-func checkCmd(args []string, env *DotEnv, config *Config) {
+func checkCmd(env *DotEnv, config *Config) {
 	if env == nil {
 		panic("`check' needs environment")
 	}
 	log.Fatal("`check' has not been implemented yet")
 }
 
-func editCmd(args []string, env *DotEnv, config *Config) {
+func editCmd(env *DotEnv, config *Config) {
 	if env == nil {
 		panic("`edit' needs environment")
 	}
 	log.Fatal("`edit' has not been implemented yet")
 }
 
-func initCmd(args []string, env *DotEnv, config *Config) {
-	if env == nil {
-		panic("`init' needs environment")
+func initCmd() {
+	home := os.Getenv("HOME")
+
+	// setup the cache directory if it doesn't already exist
+	cacheDir := filepath.Join(home, ".cache")
+	if _, err := os.Stat(cacheDir); os.IsNotExist(err) {
+		err := os.MkdirAll(cacheDir, 0755)
+		CheckIfError(err)
 	}
-	log.Fatal("`init' has not been implemented yet")
+
+	// clone this repository as the template cache
+	path := filepath.Join(cacheDir, "dotfiles")
+	_, err := git.PlainClone(path, false, &git.CloneOptions{
+		URL:      "https://github.com/geoffjay/dotfiles",
+		Progress: os.Stdout,
+	})
+	CheckIfError(err)
+
+	// setup the configuration
+	configDir := filepath.Join(home, ".config", "dotfiles")
+	if _, err := os.Stat(configDir); os.IsNotExist(err) {
+		err := os.MkdirAll(configDir, 0755)
+		CheckIfError(err)
+	}
+
+	configSrc := filepath.Join(cacheDir, "dotfiles", "config", "dotfiles.yml")
+	configDst := filepath.Join(configDir, "dotfiles.yml")
+	err = CopyFile(configSrc, configDst)
+	CheckIfError(err)
+
+	// setup the templates
+	templateDir := filepath.Join(home, ".local", "share", "dotfiles")
+	if _, err := os.Stat(templateDir); os.IsNotExist(err) {
+		err := os.MkdirAll(templateDir, 0755)
+		CheckIfError(err)
+	}
+
+	templateSrc := filepath.Join(cacheDir, "dotfiles", "templates")
+	templateDst := filepath.Join(templateDir, "templates")
+	err = CopyDir(templateSrc, templateDst)
+	CheckIfError(err)
 }
 
-func updateCmd(args []string, env *DotEnv, config *Config) {
+func resetCmd() {
+	home := os.Getenv("HOME")
+
+	err := RemoveGlob(filepath.Join(home, ".cache", "dotfiles"))
+	CheckIfError(err)
+
+	err = RemoveGlob(filepath.Join(home, ".config", "dotfiles"))
+	CheckIfError(err)
+
+	err = RemoveGlob(filepath.Join(home, ".local", "share", "dotfiles"))
+	CheckIfError(err)
+}
+
+func updateCmd(env *DotEnv, config *Config) {
 	var err error
 
 	if env == nil {
-		log.Fatal("`update' needs environment")
+		panic("`update' needs environment")
 	}
 
 	for _, dotfile := range config.DotFiles.Files {
