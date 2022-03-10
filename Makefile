@@ -21,4 +21,11 @@ check: build; $(info $(M) Testing the development environment...)
 test: ; $(info $(M) Running tests...)
 	@go test -v -tags debug,integration ./...
 
+# additional docker builds for testing repo as GH dotfiles for codespaces
+image: ; $(info $(M) Building docker image...)
+	@docker build -t dotfiles .
+
+container: ; $(info $(M) Starting dotfiles container...)
+	@docker run -it --rm dotfiles /bin/bash
+
 .PHONY: all build debug release clean

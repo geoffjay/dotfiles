@@ -6,25 +6,29 @@
 # XXX: consider doing everything with ansible, custom tooling seems unnecessary
 #
 
-function __starship {
-  sh -c "$(curl -fsSL https://starship.rs/install.sh)"
-
-  sed 's/^ *//' >> $HOME/.bash.d/10-prompt << EOF
-    eval "$(starship init bash)"
-EOF
+__starship() {
+  sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes --bin-dir="$HOME/.local/bin"
+  echo "eval \"\$(starship init bash)\"" >> $HOME/.bash.d/10-prompt
 }
 
-function __vim {
+__vim() {
   git clone git@github.com:geoffjay/dotvim.git ~/.config/nvim
 }
 
-function __cs_prepare {
+__cs_prepare() {
   sudo apt install -y \
     neovim \
     tmux
 }
 
-function __prepare {
+__env() {
+  # this will be moved to rc, here for testing
+  export PATH=$PATH:$HOME/.local/bin
+}
+
+__prepare() {
+  mkdir -p $HOME/.local/bin
+  mkdir -p $HOME/.local/etc
   mkdir -p $HOME/.bash.d
 
   __starship
@@ -35,6 +39,7 @@ function __prepare {
 # FIXME: clean this up to handle linux/darwin
 #
 
+__env
 __prepare
 
 if [[ "$CODESPACES" == "true" ]]; then
