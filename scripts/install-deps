@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Development dependencies
+
+GO_BIN="$(go env GOPATH)"/bin
+
+function __cmd_check {
+  ! command -v "$1" &>/dev/null
+}
+
+if __cmd_check "$GO_BIN"/golangci-lint; then
+  go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+fi
+
+if __cmd_check "$GO_BIN"/git-chglog; then
+  go get -u github.com/git-chglog/git-chglog/cmd/git-chglog
+fi
+
+if __cmd_check "$GO_BIN"/tomlv; then
+  go get github.com/BurntSushi/toml/cmd/tomlv
+fi

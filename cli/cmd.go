@@ -11,14 +11,12 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// Build is used to control functionality based on build type
+// Build is used to control functionality based on build type.
 var Build string
 
 // Run executes the main command.
 func Run() {
-	if len(os.Args) == 1 {
-		help([]string{})
-	}
+	processArgs()
 
 	args := os.Args[1:]
 	cmdArgs := args[1:]
@@ -62,6 +60,12 @@ Configuration:
 `, os.Getenv("USER"), os.Getenv("HOME"), getTemplateDir(), getConfigDir(), string(yamlConfig))
 	default:
 		help(cmdArgs)
+	}
+}
+
+func processArgs() {
+	if len(os.Args) == 1 {
+		help([]string{})
 	}
 }
 

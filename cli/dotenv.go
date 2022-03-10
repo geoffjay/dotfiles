@@ -27,7 +27,7 @@ func (d *DotEnv) WriteHeader(filetype string) string {
 	return strings.Join(elements, "\n")
 }
 
-// NewDotEnv constructs a new instance of a template enviroment for template
+// NewDotEnv constructs a new instance of a template environment for template
 // processing.
 func NewDotEnv(user *User) *DotEnv {
 	// TODO: user should be read from config
