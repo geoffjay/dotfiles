@@ -1,0 +1,17 @@
+---
+# file: roles/common/tasks/main.yml
+
+- name: Setting codespaces from environment
+  set_fact: is_codespaces="{{ lookup('env', 'CODESPACES') | default('false', True) }}"
+
+- include_tasks: arch.yml
+  when: ansible_os_family == "Archlinux"
+
+- include_tasks: debian.yml
+  when: "(ansible_os_family == 'Debian' and hostvars['localhost']['is_codespaces'] == false)"
+
+- include_tasks: macos.yml
+  when: ansible_os_family == "Darwin"
+
+- include_tasks: codespaces.yml
+  when: "(ansible_os_family == 'Debian' and hostvars['localhost']['is_codespaces'] == true)"

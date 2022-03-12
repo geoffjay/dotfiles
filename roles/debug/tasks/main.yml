@@ -1,0 +1,19 @@
+---
+# file: roles/test/tasks/main.yml
+
+- name: Print debug information
+  vars:
+    msg: |
+        Ansible Distribution: {{ ansible_distribution }}
+        Ansible Dist version: {{ ansible_distribution_version }}
+  debug:
+    msg: "{{ msg.split('\n') }}"
+  tags: debug_info
+
+- name: Print configuration information
+  vars:
+    msg: |
+        Email: {{ email }}
+  debug:
+    msg: "{{ msg.split('\n') }}"
+  tags: debug_info

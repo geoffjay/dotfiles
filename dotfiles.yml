@@ -1,0 +1,17 @@
+---
+# file: setup.yml
+
+- name: Setup Host
+  hosts: local
+  become: yes
+
+  vars:
+    enable_debug: true
+
+  vars_files:
+    - vars/config.yml
+
+  roles:
+    - role: debug
+      when: enable_debug == true
+    - role: common

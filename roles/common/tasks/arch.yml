@@ -1,0 +1,6 @@
+---
+# file: roles/common/tasks/arch.yml
+
+- name: Run common tasks for ArchLinux
+  debug:
+    msg: Common ArchLinux tasks
