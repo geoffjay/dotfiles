@@ -1,0 +1,6 @@
+# vim:filetype=sh
+
+if [[ "$(currsh)" = "/bin/bash" ]]; then
+  bind 'set show-all-if-ambiguous on'
+  #bind 'TAB:menu-complete'
+fi

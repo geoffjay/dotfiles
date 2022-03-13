@@ -1,0 +1,12 @@
+! vim:ft=xdefaults
+
+! Colors
+
+*.boldMode: true
+*.colorBDMode: false
+!*.colorBD: cyan
+
+!#include "base16"
+!#include "gruvbox"
+#include "nord"
+!#include "solarized"

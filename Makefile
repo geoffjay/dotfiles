@@ -2,14 +2,15 @@ PROJECT := "dotfiles"
 
 M = $(shell printf "\033[34;1m▶\033[0m")
 
+all: dotfiles setup
+
 -include cmd/build.mk
 
-all: build
-
-build: debug
-
 dotfiles: ; $(info $(M) Running ansible dotfiles playbook...)
-  @ansible-playbook -i inventory/hosts dotfiles.yml
+	@ansible-playbook -i inventory/hosts dotfiles.yml
+
+setup: ; $(info $(M) Running ansible setup playbook...)
+	@ansible-playbook -i inventory/hosts setup.yml
 
 # additional docker builds for testing repo as GH dotfiles for codespaces
 image: ; $(info $(M) Building docker image...)

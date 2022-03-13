@@ -1,0 +1,4 @@
+# vim:filetype=sh
+
+alias coanda-vpn='sudo openfortivpn -c ~/.local/etc/forti.conf'
+alias coanda-ims='ssh apps.coanda.ca'

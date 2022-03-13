@@ -1,0 +1,13 @@
+# vim:filetype=sh
+
+APEXDIR=$HOME/Dropbox/Projects/apex
+
+alias apex-env='source $HOME/.venv/apex/bin/activate'
+alias acd='cd $APEXDIR'
+alias acd-cli='cd $APEXDIR/cli'
+alias acd-lib='cd $APEXDIR/libapex'
+alias acd-go='cd $APEXDIR/go-apex'
+alias acd-broker='cd $APEXDIR/broker'
+alias acd-master='cd $APEXDIR/master'
+alias acd-proto='cd $APEXDIR/proto'
+alias acd-plant='cd $APEXDIR/plant'

@@ -4,3 +4,35 @@
 - name: Run common tasks for ArchLinux
   debug:
     msg: Common ArchLinux tasks
+
+# FIXME: doesn't work
+# - name: Run pacman update
+#   community.general.pacman:
+#     update_cache: yes
+#     upgrade: yes
+
+- name: Install common Arch packages
+  community.general.pacman:
+    name:
+      - base-devel
+      - bash-completion
+      - curl
+      - git
+      - htop
+      - mlocate
+      - tmux
+      - tree
+    state: present
+  tags:
+    - common
+
+# FIXME: doesn't work
+# - name: Install common AUR packages
+#   community.general.pacman:
+#     executable: yay
+#     name:
+#       - nodenv
+#       - nodenv-node-build
+#     state: present
+#   tags:
+#     - common

@@ -1,0 +1,5 @@
+# vim:filetype=sh
+
+#export npm_config_prefix="$HOME/.npm-global"
+export PATH="$HOME/.npm-global/bin:$PATH"
+export PATH="$(yarn global bin):$PATH"

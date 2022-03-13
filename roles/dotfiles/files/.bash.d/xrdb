@@ -1,0 +1,8 @@
+# vim:filetype=sh
+
+# load defaults for X applications
+if which xrdb &>/dev/null; then
+  if [ -n "$DISPLAY" ]; then
+    xrdb -load ~/.Xdefaults
+  fi
+fi

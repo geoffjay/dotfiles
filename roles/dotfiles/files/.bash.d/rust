@@ -1,0 +1,4 @@
+# vim:filetype=sh
+
+export PATH="$HOME/.cargo/bin:$PATH"
+source $HOME/.cargo/env

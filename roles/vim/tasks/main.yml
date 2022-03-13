@@ -1,0 +1,10 @@
+---
+# file: roles/vim/tasks/main.yml
+
+- name: Run vim configuration tasks
+  include_tasks: dotfiles.yml
+  when: "'dotfiles' in playbook"
+
+- name: Run vim setup tasks
+  include_tasks: setup.yml
+  when: "'setup' in playbook"

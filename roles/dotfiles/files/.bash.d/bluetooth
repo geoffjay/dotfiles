@@ -1,0 +1,5 @@
+# vim:filetype=sh
+
+# bluetooth shortcuts
+bose="04:52:C7:4A:9E:4F"
+alias bt-connect-bose='echo -e "power on\npair $bose\nconnect $bose\n" | bluetoothctl'

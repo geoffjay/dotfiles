@@ -1,10 +1,18 @@
 ---
 # file: vars/config.yml
 
-# user info
-email: geoff.jay@gmail.com
-
 # locale/tz
 time_zone: America/Vancouver
 locale: en_US.UTF-8 UTF-8
 lang: en_US.UTF-8
+
+# user info
+github_user: geoffjay
+gitlab_user: geoff.jay
+email: geoff.jay@gmail.com
+
+# accounts
+default_user: cap
+default_group: users
+codespaces_user: vscode
+codespaces_group: vscode

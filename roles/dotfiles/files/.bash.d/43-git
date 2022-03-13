@@ -1,0 +1,23 @@
+# vim:filetype=sh
+
+# git
+alias gistory="history | grep git"
+alias git-graph="git log --pretty=format:\"%h : %s\" --graph"
+
+alias g="git"
+alias gco="g co"
+alias gff="git merge --ff-only"
+alias gg="g grep"
+alias ggr="git-graph"
+alias gms="g merge staging"
+alias gks="g fetch && g checkout staging && g pull && g checkout @{-1}"
+
+git_checkout_issue() {
+  gco issues/$1
+}
+alias gcoi=git_checkout_issue
+
+_gdiff() {
+  vim -p `git diff --name-only`
+}
+alias gdiff=_gdiff

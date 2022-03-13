@@ -24,10 +24,11 @@ jobs:
 
     - name: Get dependencies
       run: |
+        cd cmd
         go get -v -d ./...
     - name: Build
       run: |
-        make
+        make debug
     - name: Test
       run: |
         make test

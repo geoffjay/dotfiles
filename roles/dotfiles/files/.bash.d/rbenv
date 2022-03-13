@@ -1,0 +1,7 @@
+# vim:filetype=sh
+
+which rbenv &>/dev/null
+if [[ $? -ne 0 ]]; then
+  export PATH="$HOME/.rbenv/bin:$PATH"
+  eval "$(rbenv init -)"
+fi

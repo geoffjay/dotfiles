@@ -4,6 +4,10 @@
 # XXX: for now this is just to test setup in codespaces environments
 #
 
+__cmd_check() {
+  command -v "$1" &>/dev/null
+}
+
 __ansible() {
   if [[ "$CODESPACES" == "true" ]]; then
     sudo apt-get update
@@ -13,7 +17,10 @@ __ansible() {
     sudo apt-get install -y ansible
   fi
 
+  ansible-galaxy collection install community.general
+
   make dotfiles
+  make setup
 }
 
 # __starship() {

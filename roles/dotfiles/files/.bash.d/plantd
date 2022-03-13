@@ -1,0 +1,15 @@
+# vim:filetype=sh
+
+PLANTDDIR=$HOME/Dropbox/Projects/plantd
+PLANTDLIB=$PLANTDDIR/lib
+
+alias plantd-env='source $HOME/.venv/plantd/bin/activate'
+alias pcd='cd $PLANTDDIR'
+alias pcd-depl='cd $PLANTDDIR/deployments'
+alias pcd-mod='cd $PLANTDDIR/modules'
+alias pcd-srv='cd $PLANTDDIR/services'
+alias pcd-lib='cd $PLANTDLIB'
+alias pcd-rslib='cd $PLANTDLIB/plantd-rs'
+alias pcd-golib='cd $PLANTDLIB/go-plantd'
+alias pcd-javalib='cd $PLANTDLIB/jplantd'
+alias pcd-glib='cd $PLANTDLIB/libplantd'

@@ -1,0 +1,73 @@
+# vim:filetype=sh
+
+# TODO: should extend base variables
+export LIBPLANTD_PATH=$HOME/Dropbox/Projects/plantd/lib/libplantd
+export LPD_PATH=$LIBPLANTD_PATH
+export LPD_SETTINGS=
+export LPD_ENV=
+export LPD_VENV=$HOME/.pyenv/versions/3.8.7/envs/libplantd
+
+_lpd() {
+  debug "Change to $LPD_PATH"
+  [[ $PWD != $LPD_PATH ]] && cd $LPD_PATH
+}
+
+_lpd_venv() {
+  # This is specific to the libplantd project
+  debug "Activate virtualenv $LPD_VENV"
+  _lpd
+  [[ "$VIRTUAL_ENV" != "$LPD_VENV" ]] && pyenv activate libplantd
+}
+
+alias lpd=_lpd
+alias lpd-venv=_lpd_venv
+
+# TODO: use the base functions with the branch as an input
+
+_lpd_todo() {
+    git diff --name-only master | xargs rg -B1 -A3 TODO
+}
+
+_lpd_fixme() {
+    git diff --name-only master | xargs rg -B1 -A3 FIXME
+}
+
+_lpd_xxx() {
+    git diff --name-only master | xargs rg -B1 -A3 XXX
+}
+
+_lpd_issue () {
+    logcmd git checkout master &&
+    logcmd git pull origin master &&
+    logcmd git checkout -b "issues/$@" &&
+    logcmd git commit --allow-empty -n -m "$(printf "Fixes #$@\n\n[ci skip]")" &&
+    logcmd git push -u origin "issues/$@" &&
+    lpd-track "$@"
+}
+
+# This requires that `lab` be installed:https://github.com/zaquestion/lab
+_lpd_track() {
+    logcmd lab merge-request master "issues/$@" -d -a "geoff.jay"
+}
+
+_lpd_push() {
+    logcmd git push -u origin "issues/$@" &&
+    lpd-track "$@"
+}
+
+_lpd_up() {
+    git fetch --no-tags --all -p &&
+    (gff || true) &&
+    git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -n 1 git branch -D &&
+    if [ "`git rev-parse --abbrev-ref HEAD`" != "master" ]; then
+        git fetch origin master:master
+    fi
+}
+
+alias lpd-todo=_lpd_todo
+alias lpd-fixme=_lpd_fixme
+alias lpd-xxx=_lpd_xxx
+alias lpd-issue=_lpd_issue
+alias lpd-track=_lpd_track
+alias lpd-push=_lpd_push
+alias lpd-up=_lpd_up
