@@ -1,0 +1,95 @@
+# vim: set ts=2 sw=2 :
+# vim: set ft=sh
+
+[user]
+  name = {{ full_name }}
+  email = {{ email }}
+
+[include]
+  path = ".gitconfig.d/github"
+  path = ".gitconfig.d/gitlab"
+
+[alias]
+  ci = commit -a
+  co = checkout
+  cop = checkout @{-1}
+  cl = clone
+  r-m = rebase master
+  r-d = rebase develop
+  r-i-m = rebase -i master
+  r-i-d = rebase -i develop
+  st = status
+  lg1 = \
+    !"f() { \
+      export COMMIT=\"%C(bold blue)%h%C(reset)\"; \
+      export AGE=\"%C(bold green)(%ar)%C(reset)\"; \
+      export BRANCH=\"%C(bold yellow)%d%C(reset)\"; \
+      export MSG=\"%C(white)%s%C(reset)\"; \
+      export AUTHOR=\"%C(bold white)— %an%C(reset)\"; \
+      git log --graph --all --abbrev-commit --date=relative \
+        --format=format:\"${COMMIT} - ${AGE} ${MSG} ${AUTHOR}${BRANCH}\"; \
+    }; f"
+  lg2 = \
+    !"f() { \
+      export COMMIT=\"%C(bold blue)%h%C(reset)\"; \
+      export DATE=\"%C(bold cyan)%aD%C(reset)\"; \
+      export AGE=\"%C(bold green)(%ar)%C(reset)\"; \
+      export BRANCH=\"%C(bold yellow)%d%C(reset)\"; \
+      export MSG=\"%C(white)%s%C(reset)\"; \
+      export AUTHOR=\"%C(bold white)— %an%C(reset)\"; \
+      git log --graph --all --abbrev-commit \
+        --format=format:\"${COMMIT} - ${DATE} ${AGE}${BRANCH}%n\"\"    ${MSG} ${AUTHOR}\"; \
+    }; f"
+  lg = !"git lg1"
+  d = difftool
+  ls-subtrees = !"git log | grep git-subtree-dir | awk '{ print $2 }'"
+  changed-files = \
+    !"f() { \
+      git diff --stat --color $1..$(git branch --show-current); \
+    }; f"
+  cf = changed-files
+
+[init]
+  templatedir = ~/.git-templates
+
+[core]
+  whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+  excludesfile = $HOME/.gitignore_global
+
+[color]
+  ui = auto
+  editor = vim
+
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+
+[color]
+  ui = true
+
+[color "diff"]
+  whitespace = red reverse
+
+[push]
+  default = simple
+
+[diff]
+  tool = vimdiff
+
+[difftool]
+  prompt = false
+
+[difftool "diffpdf"]
+  cmd = diffpdf \"$LOCAL\" \"$REMOTE\"

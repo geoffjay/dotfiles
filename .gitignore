@@ -4,8 +4,5 @@
 
 .env
 
-.idea/
-build/
-output/
-
-dotfiles
+cmd/build/
+cmd/output/

@@ -20,7 +20,13 @@
   include_tasks: codespaces.yml
   when: "(ansible_os_family == 'Debian' and hostvars['localhost']['is_codespaces'] == true)"
 
-# XXX: things that maybe go somewhere else
+# XXX: things that need to go somewhere else
+- name: Install nodenv on macOS hosts
+  community.general.homebrew:
+    name: nodenv
+    state: present
+  when: ansible_os_family == 'Darwin'
+
 - name: Download nodenv
   ansible.builtin.git:
     repo: https://github.com/nodenv/nodenv.git
@@ -42,6 +48,7 @@
   tags:
     - common
     - node
+    - nodenv
 
 - name: Build nodenv dynamic bash extension
   ansible.builtin.command:
@@ -49,6 +56,10 @@
     chdir: "{{ lookup('env', 'HOME') }}/.nodenv"
   become: yes
   become_user: "{{ user }}"
+  tags:
+    - common
+    - node
+    - nodenv
 
 - name: Create nodenv plugins path
   ansible.builtin.file:
@@ -58,6 +69,10 @@
     recurse: yes
   become: yes
   become_user: "{{ user }}"
+  tags:
+    - common
+    - node
+    - nodenv
 
 - name: Install nodenv plugins
   ansible.builtin.git:
@@ -69,24 +84,59 @@
     - nodenv-aliases
   become: yes
   become_user: "{{ user }}"
-
-- name: Check a thing
-  ansible.builtin.shell: ls "{{ lookup('env', 'HOME') }}/.local/bin"
-  become: yes
-  become_user: "{{ user }}"
-
-- name: Check another thing
-  debug:
-    msg: "{{ lookup('env', 'PATH') }}"
-  become: yes
-  become_user: "{{ user }}"
+  tags:
+    - common
+    - node
+    - nodenv
 
 - name: Install node v14.17
   ansible.builtin.command: "/home/{{ user }}/.local/bin/nodenv install --skip-existing 14.17.0"
   become: yes
   become_user: "{{ user }}"
+  tags:
+    - common
+    - node
+    - nodenv
 
 - name: Set global node version to v14.17
   ansible.builtin.command: "/home/{{ user }}/.local/bin/nodenv global 14.17.0"
   become: yes
   become_user: "{{ user }}"
+  tags:
+    - common
+    - node
+    - nodenv
+
+- name: Install yarn
+  ansible.builtin.shell:
+    cmd: |
+      eval "$(nodenv init -)"
+      npm install -g yarn
+  environment:
+    PATH: "{{ lookup('env', 'HOME') }}/.nodenv/bin:{{ lookup('env', 'HOME') }}/.nodenv/shims"
+  become: yes
+  become_user: "{{ user }}"
+  tags:
+    - common
+    - yarn
+
+- name: Install LSP servers using yarn
+  community.general.yarn:
+    name: "{{ item }}"
+    global: yes
+    state: latest
+  environment:
+    PATH: "{{ lookup('env', 'HOME') }}/.nodenv/shims"
+  with_items:
+    - bash-language-server
+    - graphql
+    - graphql-language-service-cli
+    - pyright
+    - typescript-language-server
+    - vls
+    - yaml-language-server
+  become: yes
+  become_user: "{{ user }}"
+  tags:
+    - common
+    - lsp
