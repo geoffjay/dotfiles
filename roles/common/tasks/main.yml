@@ -125,8 +125,6 @@
     name: "{{ item }}"
     global: yes
     state: latest
-  environment:
-    PATH: "{{ lookup('env', 'HOME') }}/.nodenv/shims"
   with_items:
     - bash-language-server
     - graphql

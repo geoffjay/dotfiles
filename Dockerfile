@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM ubuntu:18.04
+FROM ubuntu:18.04 AS base
 
 LABEL project=dotfiles
 MAINTAINER Geoff Johnson <geoff.jay@gmail.com>
@@ -19,9 +19,19 @@ RUN apt-get update \
   && apt-get install -y ansible \
   && rm -rf /var/lib/apt/lists*
 
-# use same things as codespaces for testing purposes
+FROM base AS codespaces
 
-RUN echo 'vscode ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/10-vscode
+# use same setup as codespaces for testing purposes
+
+ARG YARN_URL="https://dl.yarnpkg.com/debian"
+
+RUN curl --location --show-error --silent "$YARN_URL/pubkey.gpg" | apt-key add - \
+  && echo "deb $YARN_URL/ stable main" > /etc/apt/sources.list.d/yarn.list \
+  && apt-get update \
+  && apt-get install -y yarn \
+  && rm -rf /var/lib/apt/lists*
+
+RUN echo 'vscode ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/10-vscode
 
 ENV CODESPACES="true"
 
