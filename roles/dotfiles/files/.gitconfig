@@ -1,0 +1,130 @@
+# vim: set ts=2 sw=2 :
+# vim: set ft=sh
+
+[user]
+  name = Geoff Johnson
+  email = geoff.jay@gmail.com
+
+[init]
+  templatedir = ~/.git-templates
+  defaultBranch = main
+
+[alias]
+  aliases = !"git config --get-regexp alias | sed -e 's/\\([a-z\\-\\.]*\\)[[:space:]].*/\\1/' -e 's/alias\\.//'"
+  ci = commit -a
+  co = checkout
+  cop = checkout @{-1}
+  cl = clone
+  r-m = rebase master
+  r-d = rebase develop
+  r-i-m = rebase -i master
+  r-i-d = rebase -i develop
+  st = status
+  lg1 = \
+    !"f() { \
+      COMMIT=\"%C(bold blue)%h%C(reset)\"; \
+      AGE=\"%C(bold green)(%ar)%C(reset)\"; \
+      BRANCH=\"%C(bold yellow)%d%C(reset)\"; \
+      MSG=\"%C(white)%s%C(reset)\"; \
+      AUTHOR=\"%C(bold white)— %an%C(reset)\"; \
+      git log --graph --all --abbrev-commit --date=relative \
+        --format=format:\"${COMMIT} - ${AGE} ${MSG} ${AUTHOR}${BRANCH}\"; \
+    }; f"
+  lg2 = \
+    !"f() { \
+      COMMIT=\"%C(bold blue)%h%C(reset)\"; \
+      DATE=\"%C(bold cyan)%aD%C(reset)\"; \
+      AGE=\"%C(bold green)(%ar)%C(reset)\"; \
+      BRANCH=\"%C(bold yellow)%d%C(reset)\"; \
+      MSG=\"%C(white)%s%C(reset)\"; \
+      AUTHOR=\"%C(bold white)— %an%C(reset)\"; \
+      git log --graph --all --abbrev-commit \
+        --format=format:\"${COMMIT} - ${DATE} ${AGE}${BRANCH}%n\"\"    ${MSG} ${AUTHOR}\"; \
+    }; f"
+  lg = !"git lg1"
+  ll = "log --graph --format=\"%C(yellow)%h%C(red)%d%C(reset) - %C(bold green)(%ar)%C(reset) %s %C(blue)<%an>%C(reset)\""
+  d = difftool
+  ls-subtrees = !"git log | grep git-subtree-dir | awk '{ print $2 }'"
+  changed-files = \
+    !"f() { \
+      git diff --stat --color $1..$(git branch --show-current); \
+    }; f"
+  cf = changed-files
+  create-branch = \
+    !"f() { \
+      git checkout -b $1 && \
+      git commit -m \"chore: create branch\" --allow-empty && \
+      git push -u origin $(git symbolic-ref --short HEAD); \
+    }; f"
+  cb = create-branch
+  recent-branches = for-each-ref --sort=-committerdate --count=10 --format='%(refname:short)' refs/heads/
+  pick-branch = !"f() { select branch in `git recent-branches`; do git checkout $branch; break; done }; f"
+  pb = pick-branch
+  # helpers only meant for use with `up`
+  x-repo = !"f() { git config --get remote.origin.url | sed 's/^.*\\:\\(.*\\)\\.git/\\1/'; }; f"
+  x-fetch-all = fetch --no-tags --all -p
+  x-fetch-branch = !"f() { git fetch origin $1:$1; }; f"
+  x-merge-ff = merge --ff-only
+  x-branch-current = rev-parse --abbrev-ref HEAD
+  x-branch-default = !"f() { git remote show origin | grep HEAD | awk '{print $3}'; }; f"
+  x-branch-tidy = "!f() { git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -n 1 git branch -D; }; f"
+  up = \
+    !"f() { \
+      current=$(git x-branch-current); \
+      default=$(git x-branch-default); \
+      git x-fetch-all && \
+      (git x-merge-ff || true) && \
+      git x-branch-tidy && \
+      if [ \"$current\" != \"$default\" ]; then git x-fetch-branch $default; fi; \
+    }; f"
+  # branch helpers
+  mm = !"f() { git merge $(git x-branch-default); }; f"
+  rbm = !"f() { git rebase $(git x-branch-default); }; f"
+  # `clone` helpers
+  gh-clone = !"f() { git clone git@github.com:$1.git; }; f"
+  gl-clone = !"f() { git clone git@gitlab.com:$1.git; }; f"
+  # PR helpers
+  pr-files = \
+    !"f() { \
+      current=$(git x-branch-current); \
+      default=$(git x-branch-default); \
+      git diff --name-only $current $(git merge-base $current $default); \
+    }; f"
+
+[core]
+  whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+  excludesfile = /Users/geoff/.gitignore_global
+  # ignorecase = false
+
+[color]
+  ui = auto
+  editor = vim
+
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+
+[color "diff"]
+  whitespace = red reverse
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+
+[push]
+  default = simple
+
+[diff]
+  tool = vimdiff
+
+[difftool]
+  prompt = false
+
+[difftool "diffpdf"]
+  cmd = diffpdf \"$LOCAL\" \"$REMOTE\"
