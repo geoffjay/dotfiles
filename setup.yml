@@ -1,0 +1,21 @@
+---
+# file: setup.yml
+
+- name: Setup Host
+  hosts: local
+  become: yes
+
+  vars:
+    enable_debug: true
+    playbook: "setup"
+    user: "{{ codespaces_user if hostvars['localhost']['is_codespaces'] == true else default_user }}"
+    group: "{{ codespaces_group if hostvars['localhost']['is_codespaces'] == true else default_group }}"
+
+  vars_files:
+    - vars/config.yml
+
+  roles:
+    - role: debug
+      when: enable_debug == true
+    - role: common
+    - role: vim

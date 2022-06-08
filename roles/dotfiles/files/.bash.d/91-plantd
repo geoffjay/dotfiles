@@ -1,0 +1,91 @@
+# vim:filetype=sh
+
+export PLANTD_PATH=$HOME/Dropbox/Projects/plantd
+export PD_PATH=$PLANTD_PATH
+export PD_SETTINGS=config.settings.local
+export PD_VENV=$HOME/.pyenv/versions/3.8.2/envs/plantd-django
+
+_pd() {
+  debug "Change to $PD_PATH"
+  [[ $PWD != $PD_PATH ]] && cd $PD_PATH
+}
+
+_pd_venv() {
+  # This is specific to the plantd-django project
+  debug "Activate virtualenv $PD_VENV"
+  _pd
+  cd plantd-django/
+  [[ "$VIRTUAL_ENV" != "$PD_VENV" ]] && pyenv activate plantd-django
+}
+
+_pd_shell() {
+  debug "Launch Django shell"
+  _pd_venv
+  DJANGO_SETTINGS_MODULE=$PD_SETTINGS ./manage.py shell
+}
+
+_pd_sqlshell() {
+  debug "Launch Django SQL debug shell"
+  _pd_venv
+  DJANGO_SETTINGS_MODULE=$PD_SETTINGS ./manage.py debugsqlshell
+}
+
+alias pd=_pd
+alias pd-venv=_pd_venv
+alias pd-pylib='cd $PD_PATH/lib/py-plantd'
+alias pd-pyvenv='source $HOME/.venv/py-plantd/bin/activate'
+alias pd-pytest='python -m unittest tests.runner'
+alias pd-clib='cd $PD_PATH/lib/libplantd'
+alias pd-shell=_pd_shell
+alias pd-sqlshell=_pd_sqlshell
+
+# plantd-django helpers, useful as long as the default branch is staging
+
+_pd_todo() {
+    git diff --name-only staging | xargs rg -B1 -A3 TODO
+}
+
+_pd_fixme() {
+    git diff --name-only staging | xargs rg -B1 -A3 FIXME
+}
+
+_pd_xxx() {
+    git diff --name-only staging | xargs rg -B1 -A3 XXX
+}
+
+_pd_issue () {
+    logcmd git checkout staging &&
+    logcmd git pull origin staging &&
+    logcmd git checkout -b "issues/$@" &&
+    logcmd git commit --allow-empty -n -m "$(printf "Fixes #$@\n\n[ci skip]")" &&
+    logcmd git push -u origin "issues/$@" &&
+    pd-track "$@"
+}
+
+# This requires that `lab` be installed:https://github.com/zaquestion/lab
+_pd_track() {
+    logcmd lab merge-request staging "issues/$@" -d -a "geoff.jay"
+}
+
+_pd_push() {
+    logcmd git push -u origin "issues/$@" &&
+    pd-track "$@"
+}
+
+_pd_up() {
+    git fetch --no-tags --all -p &&
+    (gff || true) &&
+    git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -n 1 git branch -D &&
+    if [ "`git rev-parse --abbrev-ref HEAD`" != "staging" ]; then
+        git fetch origin staging:staging
+    fi
+}
+
+alias pd-todo=_pd_todo
+alias pd-fixme=_pd_fixme
+alias pd-xxx=_pd_xxx
+alias pd-issue=_pd_issue
+alias pd-track=_pd_track
+alias pd-push=_pd_push
+alias pd-up=_pd_up
+alias pd-ciskip="git commit --allow-empty -m '[ci skip]'"

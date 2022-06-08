@@ -1,0 +1,5 @@
+# vim:filetype=sh
+
+alias ansible-facts="ansible -i ~/.ansible/inventory/local local -m setup"
+alias ap="ansible-playbook"
+alias ag="ansible-galaxy"

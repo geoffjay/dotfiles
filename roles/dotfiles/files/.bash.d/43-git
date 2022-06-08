@@ -1,0 +1,93 @@
+# vim:filetype=sh
+
+alias gistory="history | grep git"
+alias git-graph="git log --pretty=format:\"%h : %s\" --graph"
+
+alias g="git"
+alias gco="git co"
+alias gff="git merge --ff-only"
+alias gg="git grep"
+alias ggr="git-graph"
+alias gms="git merge staging"
+alias gmm="git mm"
+alias gks="git fetch && git checkout staging && git pull && git checkout @{-1}"
+alias gst="git status"
+alias gup="git up"
+
+git_checkout_issue() {
+  gco issues/$1
+}
+alias gcoi=git_checkout_issue
+
+_gdiff() {
+  vim -p `git diff --name-only`
+}
+alias gdiff=_gdiff
+
+_fzf_git_add() {
+  local selections=$(
+    git status --porcelain | \
+      fzf --ansi \
+        --preview 'if (git ls-files --error-unmatch {2} &>/dev/null); then
+            git diff --color=always {2}
+          else
+            bat --color=always --line-range :500 {2}
+          fi'
+  )
+  if [[ -n $selections ]]; then
+    git add --verbose $(echo "$selections" | cut -c 4- | tr '\n' ' ')
+  fi
+}
+alias gadd="_fzf_git_add"
+
+_fzf_git_log() {
+  local selections=$(
+    git ll --color=always "$@" |
+      fzf --ansi --no-sort --no-height \
+          --preview "echo {} | grep -o '[a-f0-9]\{7\}' | head -1 |
+                     xargs -I@ sh -c 'git show --color=always @'"
+    )
+  if [[ -n $selections ]]; then
+    local commits=$(echo "$selections" | sed 's/^[* |]*//' | cut -d' ' -f1 | tr '\n' ' ')
+    git show $commits
+  fi
+}
+alias gll="_fzf_git_log"
+
+_fzf_git_reflog() {
+  local selection=$(
+    git reflog --color=always "$@" |
+      fzf --no-multi --ansi --no-sort --no-height \
+        --preview "git show --color=always {1}"
+  )
+  if [[ -n $selection ]]; then
+    git show $(echo $selection | cut -d' ' -f1)
+  fi
+}
+alias grl="_fzf_git_reflog"
+
+fzf_git_log_pickaxe() {
+  if [[ $# == 0 ]]; then
+    echo "Error: search term was not provided."
+    return
+  fi
+  local selections=$(
+    git log --oneline --color=always -S "$@" |
+      fzf --ansi --no-sort --no-height \
+        --preview "git show --color=always {1}"
+  )
+  if [[ -n $selections ]]; then
+    local commits=$(echo "$selections" | cut -d' ' -f1 | tr '\n' ' ')
+    git show $commits
+  fi
+}
+alias glS="_fzf_git_log_pickaxe"
+
+# fix alias completions
+# FIXME: make-completion-wrapper doesn't autogen _g
+# complete-alias _g g git
+# complete-alias _gco gco git co
+
+if [ -f ~/.bash_completion.d/git ]; then
+  . ~/.bash_completion.d/git
+fi

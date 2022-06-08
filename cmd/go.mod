@@ -1,4 +1,4 @@
-module github.com/geoffjay/dotfiles
+module github.com/geoffjay/dotfiles/cmd
 
 go 1.16
 

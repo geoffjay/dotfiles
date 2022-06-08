@@ -1,0 +1,350 @@
+# vim:filetype=sh
+
+export CLIO_PATH=$HOME/clio
+export MANAGE_PATH=$CLIO_PATH/themis
+export MANAGE_VENV=$HOME/.pyenv/versions/3.8.7/envs/themis
+export IDENTITY_PATH=$CLIO_PATH/identity
+export CBS_PATH=$CLIO_PATH/billing-service
+
+_env() {
+    eval "$(rbenv init -)"
+    # eval "$(nodenv init -)"
+
+    trap -- '' SIGINT;
+    eval "$(dev _env)";
+    trap - SIGINT;
+}
+
+_clio() {
+    debug "Change to $CLIO_PATH"
+    [[ "$PWD" != "$CLIO_PATH" ]] && cd $CLIO_PATH
+}
+
+#
+# Themis / Manage
+#
+
+_manage() {
+    debug "Change to $MANAGE_PATH"
+    [[ "$PWD" != "$MANAGE_PATH" ]] && cd $MANAGE_PATH
+}
+
+_manage_venv() {
+    debug "Activate virtualenv $MANAGE_VENV"
+    _manage
+    [[ "$VIRTUAL_ENV" != "$MANAGE_VENV" ]] && source $MANAGE_VENV/bin/activate
+}
+
+_manage_test() {
+    debug "Run Rails tests: $1"
+    # _manage_venv
+    rspec test $1
+}
+
+_manage_console() {
+    debug "Launch Rails console"
+    _manage
+    rails c
+}
+
+_manage_notebook() {
+    debug "Launch Jupyter notebook with Rails support"
+    _manage_venv
+    # TODO: check all packages needed to launch? [jupyter ipython django-extensions]
+    # pip list --disable-pip-version-check | grep -E "^django-extensions " &>/dev/null
+    # [[ $? -eq 0 ]] && pip install django-extensions
+    # [[ $? -eq 1 ]] && error "Django setup failed"
+    # DJANGO_SETTINGS_MODULE=$SG_SETTINGS ./manage.py shell_plus --notebook
+    . $MANAGE_PATH/script/jupyter-launch
+}
+
+_manage_launch() {
+    tmux new -d -s manage "docker compose up; /bin/bash" \; \
+        split-window -d "sleep 30; overmind start; /bin/bash" \; \
+        split-window -d "/bin/bash" \; \
+        select-layout even-vertical \; \
+        attach
+}
+
+#
+# Identity (idp)
+#
+
+_idp() {
+    debug "Change to $IDENTITY_PATH"
+    [[ "$PWD" != "$IDENTITY_PATH" ]] && cd $IDENTITY_PATH
+}
+
+_idp_launch() {
+    _idp
+    tmux new -d -s identity "dev up; /bin/bash" \; \
+        split-window -h -d "/bin/bash" \; \
+        select-layout even-horizontal \; \
+        attach
+}
+
+#
+# Billing Service (cbs)
+#
+
+_cbs() {
+    debug "Change to $CBS_PATH"
+    [[ "$PWD" != "$CBS_PATH" ]] && cd $CBS_PATH
+}
+
+alias clio=_clio
+# themis/manage
+alias themis=_manage
+alias manage=_manage
+alias manage-venv=_manage_venv
+# TODO: add aliases for `overmind start -x rails` and `docker-compose up -d` (manage-stack up/down)
+# TODO: add aliases to connect to service in overmind (overmind connect ?)
+# alias manage-stack=_manage_stack
+alias manage-test=_manage_test
+alias manage-console=_manage_console
+alias manage-notebook=_manage_notebook
+alias manage-launch=_manage_launch
+# identity
+alias idp=_idp
+alias idp-launch=_idp_launch
+# billing
+alias cbs=_cbs
+
+# request and query related
+
+#_sg_login() {
+    #query='"mutation($email:String!,$password:String!){login(email:$email,password:$password){profile{id}}}"'
+    #variables='{"email":"admin@7geese.com","password":"7geese"}'
+    #data='{"query":'$query',"variables":'${variables}'}'
+    #curl -c $HOME/.7g/cookie-jar.txt \
+        #-H "Content-Type: application/json" \
+        #-d $data \
+        #http://localhost:8000/graphql/public
+#}
+
+_themis_grant() {
+    echo TODO
+}
+
+_themis_authorize() {
+    APP_HOST="${APP_HOST:-http://app.myclio.ca:3000}"
+    AUTHORIZE_URL="${AUTHORIZE_URL:-$APP_HOST/oauth/authorize}"
+    REDIRECT_URI="${REDIRECT_URI:-$APP_HOST/oauth/approval}"
+
+    if [[ -z ${CLIENT_KEY+a} ]]; then
+        echo "A value for CLIENT_KEY must be set" 1>&2
+        return
+    fi
+
+    PARAMS="response_type=code&client_id=$CLIENT_KEY&redirect_uri=$REDIRECT_URI"
+    open -a "Google Chrome" "$AUTHORIZE_URL?$PARAMS"
+}
+
+_themis_access() {
+    APP_HOST="${APP_HOST:-http://app.myclio.ca:3000}"
+    REDIRECT_URI="${REDIRECT_URI:-$APP_HOST/oauth/approval}"
+
+    if [[ -z ${CLIENT_KEY+a} ]]; then
+        echo "A value for CLIENT_KEY must be set" 1>&2
+        return
+    elif [[ -z ${CLIENT_SECRET+a} ]]; then
+        echo "A value for CLIENT_SECRET must be set" 1>&2
+        return
+    elif [[ -z ${CODE+a} ]]; then
+        echo "A value for CODE must be set" 1>&2
+        return
+    fi
+
+    curl -s -X POST \
+        -c $HOME/.clio-session \
+        -H "Content-Type: application/x-www-form-urlencoded" \
+        -d "client_secret=$CLIENT_SECRET" \
+        -d "client_id=$CLIENT_KEY" \
+        -d "redirect_uri=$REDIRECT_URI" \
+        -d "grant_type=authorization_code" \
+        -d "code=$CODE" $APP_HOST/oauth/token \
+        | jq -c
+}
+
+_themis_refresh() {
+    APP_HOST="${APP_HOST:-http://app.myclio.ca:3000}"
+
+    if [[ -z ${CLIENT_KEY+a} ]]; then
+        echo "A value for CLIENT_KEY must be set" 1>&2
+        return
+    elif [[ -z ${CLIENT_SECRET+a} ]]; then
+        echo "A value for CLIENT_SECRET must be set" 1>&2
+        return
+    elif [[ -z ${REFRESH_TOKEN+a} ]]; then
+        echo "A value for REFRESH_TOKEN must be set" 1>&2
+        return
+    fi
+
+    curl -s -X POST \
+        -d "client_secret=$CLIENT_SECRET" \
+        -d "client_id=$CLIENT_KEY" \
+        -d "refresh_token=$REFRESH_TOKEN" \
+        -d "grant_type=refresh_token" \
+        $APP_HOST/oauth/token \
+        | jq -c
+}
+
+_manage_request() {
+    curl -b $HOME/.clio/manage/cookie-jar.txt $@
+}
+
+#
+# Identity
+#
+
+_idp_is_running() {
+    status=$(docker inspect identity_idp_1 | jq ".[0].State.Status" | sed 's/"//g')
+    if [[ "$status" == "running" ]]; then
+        return 0
+    fi
+    return 1
+}
+
+_idp_attach() {
+    _idp
+    _idp_is_running
+    if [[ $? -ne 0 ]]; then
+        echo "idp container isn't running"
+        return 1
+    fi
+    # FIXME: despite all the docs this doesn't prevent ctrl+c from killing the container
+    #  use ctrl+p, ctrl+q instead until that's figured out
+    docker attach --sig-proxy=false identity_idp_1
+}
+
+_idp_console() {
+    _idp
+    _idp_is_running
+    if [[ $? -ne 0 ]]; then
+        echo "idp container isn't running"
+        return 1
+    fi
+    docker-compose exec idp rails c
+}
+
+#
+# Tech debt
+#
+
+_repo_tag() {
+    BRANCH="${BRANCH:-master}"
+    git diff --name-only $BRANCH | xargs rg -B1 -A3 $1
+}
+
+_manage_todo () {
+    _manage
+    _repo_tag TODO
+}
+
+_manage_fixme() {
+    _manage
+    _repo_tag FIXME
+}
+
+_manage_xxx() {
+    _manage
+    _repo_tag XXX
+}
+
+#
+# Subscriptions
+#
+
+_subscriptions_up() {
+    echo "WIP: don't use yet" && return
+    export OVERMIND_IGNORED_PROCESSES=rails
+    iterm-tabcmd "manage && git co subscriptions-prototype && dev up"
+    iterm-tabcmd "cbs && git co subscriptions-prototype && dev up"
+
+    # TODO: do all these things in different tmux sessions
+    # TODO: add rvim for some tabs/sessions?
+    # manage:
+    # - manage
+    # - git co subscriptions-prototype
+    # - docker compose up
+    # - overmind start
+    # cbs:
+    # - cbs
+    # - git co subscriptions-prototype
+    # - ./bin/ngrok-tunnel
+    # - DOCKER_HOST_IP=192.168.65.2 dev up
+    # identity:
+    # - idp
+    # - dev up
+    # switchboard:
+    # - cd ~/clio/example-third-party-application
+    # - docker compose up
+    # - rails s -p 3013
+}
+
+#
+# Helpers
+#
+
+_repo_track() {
+    logcmd hub pull-request -i "$@" -b $1:$2
+}
+
+_repo_issue() {
+    logcmd git checkout master &&
+    logcmd git pull origin master &&
+    logcmd git checkout -b "issues/$@" &&
+    logcmd git commit --allow-empty -n -m "$(printf "Fixes #$@")" &&
+    logcmd git push -u origin "issues/$@" &&
+    _manage_track "$@"
+}
+
+_repo_push() {
+    logcmd git push -u origin "issues/$@" &&
+    _repo_track "$@"
+}
+
+_repo_up() {
+    git fetch --no-tags --all -p &&
+    (gff || true) &&
+    git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -n 1 git branch -D &&
+    if [ "`git rev-parse --abbrev-ref HEAD`" != "master" ]; then
+        git fetch origin master:master
+    fi
+}
+
+alias manage-todo=_manage_todo
+alias manage-fixme=_manage_fixme
+alias manage-xxx=_manage_xxx
+alias manage-issue=_repo_issue
+alias manage-track='_repo_track "themis" "master"'
+alias manage-push=_repo_push
+alias manage-up=_repo_up
+
+alias idp-up=_repo_up
+alias idp-attach=_idp_attach
+alias idp-console=_idp_console
+
+_ai_search() {
+    ORDER_BY="${ORDER_BY:-relevance}"
+    ORDER_BY=$(echo $ORDER_BY | sed "s/'//g")
+
+    url="https://www.clio.com/wp-json/wp/v2/integration/"
+    # fields="author,id,excerpt,title,link,featured_media,_links.wp:featuredmedia,acf,tags"
+    fields="id,slug,excerpt,title,link,app_directory_category,acf.app_store_name,acf.enablement_type,acf.pricing,acf.how_it_works,featured_media,_links.wp:featuredmedia"
+
+    curl -s -L -G \
+        -d "search=$1" \
+        -d "_fields=$fields" \
+        -d "orderby=$ORDER_BY" \
+        -d "order=asc" \
+        -d "per_page=25" \
+        "$url" # | jq "${@:2}"
+}
+
+# limited time only
+alias logtrunc="sed -e 's/^[[:space:]](//' -e 's/^.*Load[[:space:]](//' -e 's/^.*Exists[[:space:]](//' -e 's/ms)[[:space:]].*$//'"
+alias ai-search=_ai_search
+
+# run the environment setup
+_env

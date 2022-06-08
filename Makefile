@@ -2,24 +2,15 @@ PROJECT := "dotfiles"
 
 M = $(shell printf "\033[34;1m▶\033[0m")
 
-all: build
+all: dotfiles setup
 
-build: debug
+-include cmd/build.mk
 
-debug: ; $(info $(M) Building a debug binary of $(PROJECT)...)
-	@go build -tags debug -o dotfiles main.go
+dotfiles: ; $(info $(M) Running ansible dotfiles playbook...)
+	@ansible-playbook -i inventory/hosts dotfiles.yml
 
-release: ; $(info $(M) Building a release binary of $(PROJECT)...)
-	@go build -tags release -o dotfiles main.go
-
-clean: ; $(info $(M) Removing build files... )
-	@rm dotfiles
-
-check: build; $(info $(M) Testing the development environment...)
-	@HOME=$(shell pwd) TEMPLATE_DIR=templates/ CONFIG_DIR=config/ ./dotfiles debug
-
-test: ; $(info $(M) Running tests...)
-	@go test -v -tags debug,integration ./...
+setup: ; $(info $(M) Running ansible setup playbook...)
+	@ansible-playbook -i inventory/hosts setup.yml
 
 # additional docker builds for testing repo as GH dotfiles for codespaces
 image: ; $(info $(M) Building docker image...)

@@ -1,0 +1,22 @@
+# vim:filetype=sh
+
+# django manage command
+#
+# iterates arguments and does some simple aliases, eg. sh for shell
+_djm() {
+    args=()
+    # XXX: probably don't need index, was testing something else
+    for ((i = 1; i <= $#; i++ )); do
+        #printf '%s\n' "Arg $i: ${!i}"
+        # TODO: switch argument and do simple alias
+        args+=( ${!i} )
+    done
+
+    #for i in "${args[@]}"; do
+        #printf '%s\n' "New arg $i"
+    #done
+
+    python manage.py "${args[@]}"
+}
+
+alias djm=_djm

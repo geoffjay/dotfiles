@@ -1,0 +1,19 @@
+---
+# file: vars/config.yml
+
+# locale/tz
+time_zone: America/Vancouver
+locale: en_US.UTF-8 UTF-8
+lang: en_US.UTF-8
+
+# user info
+full_name: Geoff Johnson
+email: geoff.jay@gmail.com
+github_user: geoffjay
+gitlab_user: geoff.jay
+
+# accounts
+default_user: cap
+default_group: users
+codespaces_user: vscode
+codespaces_group: vscode

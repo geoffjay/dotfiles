@@ -1,0 +1,6 @@
+---
+# file: roles/common/tasks/macos.yml
+
+- name: Run common tasks for macOS
+  debug:
+    msg: Common macOS tasks

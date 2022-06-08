@@ -1,0 +1,3 @@
+# vim:filetype=sh
+
+eval "$(direnv hook bash)"

@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM ubuntu:18.04
+FROM ubuntu:18.04 AS base
 
 LABEL project=dotfiles
 MAINTAINER Geoff Johnson <geoff.jay@gmail.com>
@@ -7,33 +7,44 @@ MAINTAINER Geoff Johnson <geoff.jay@gmail.com>
 RUN apt-get update \
   && apt-get install -y \
     bash \
-    build-essential \
     curl \
     git \
+    python3 \
+    python3-pip \
+    python3-venv \
+    software-properties-common \
     sudo \
+  && apt-add-repository -y ppa:ansible/ansible \
+  && apt-get update \
+  && apt-get install -y ansible \
   && rm -rf /var/lib/apt/lists*
 
-# FIXME: use an image for this
-RUN curl -L https://go.dev/dl/go1.17.7.linux-amd64.tar.gz -o /tmp/go1.17.7.tar.gz \
-  && sudo tar -C /usr/local -xvf /tmp/go1.17.7.tar.gz
+FROM base AS codespaces
 
-RUN echo 'vscode ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/10-vscode
+# use same setup as codespaces for testing purposes
 
-# use same things as codespaces for testing purposes
+ARG YARN_URL="https://dl.yarnpkg.com/debian"
+
+RUN curl --location --show-error --silent "$YARN_URL/pubkey.gpg" | apt-key add - \
+  && echo "deb $YARN_URL/ stable main" > /etc/apt/sources.list.d/yarn.list \
+  && apt-get update \
+  && apt-get install -y yarn \
+  && rm -rf /var/lib/apt/lists*
+
+RUN echo 'vscode ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/10-vscode
 
 ENV CODESPACES="true"
 
 RUN groupadd -r vscode \
   && useradd -g vscode vscode \
-  && usermod -a -G sudo vscode
+  && usermod -a -G sudo vscode \
+  && mkdir /home/vscode \
+  && chown vscode.vscode -R /home/vscode
 
 USER vscode
 
 WORKDIR /home/vscode/projects/dotfiles
 COPY . .
-
-# build the dotfiles binary
-RUN PATH=$PATH:/usr/local/go/bin make
 
 # run the dotfiles setup
 RUN ./install.sh

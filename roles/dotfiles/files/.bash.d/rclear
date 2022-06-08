@@ -1,0 +1,6 @@
+# vim:filetype=sh
+
+if [[ "$(currsh)" = "/bin/bash" ]]; then
+  alias rclear="tput reset && source ~/.bashrc"
+  bind -x '"\C-l": rclear'
+fi

@@ -1,47 +1,53 @@
-# vim:set ts=2 sw=2:
-# vim:set ft=sh
+#!/bin/bash
 
 #
 # XXX: for now this is just to test setup in codespaces environments
-# XXX: consider doing everything with ansible, custom tooling seems unnecessary
 #
 
-__starship() {
-  sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes --bin-dir="$HOME/.local/bin"
-  echo "eval \"\$(starship init bash)\"" >> $HOME/.bash.d/10-prompt
+__cmd_check() {
+  command -v "$1" &>/dev/null
 }
 
-__vim() {
-  git clone git@github.com:geoffjay/dotvim.git ~/.config/nvim
+__ansible() {
+  if [[ "$CODESPACES" == "true" ]]; then
+    sudo apt-get update
+    sudo apt-get install -y software-properties-common
+    sudo apt-add-repository -y ppa:ansible/ansible
+    sudo apt-get update
+    sudo apt-get install -y ansible
+  fi
+
+  ansible-galaxy collection install community.general
+
+  make dotfiles
+  make setup
 }
 
-__cs_prepare() {
-  sudo apt install -y \
-    neovim \
-    tmux
-}
+# __starship() {
+#   sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes --bin-dir="$HOME/.local/bin"
+#   echo "eval \"\$(starship init bash)\"" >> $HOME/.bash.d/10-prompt
+# }
 
-__env() {
-  # this will be moved to rc, here for testing
-  export PATH=$PATH:$HOME/.local/bin
-}
+# __vim() {
+#   git clone git@github.com:geoffjay/dotvim.git ~/.config/nvim
+# }
+
+# __cs_prepare() {
+#   sudo apt install -y \
+#     neovim \
+#     tmux
+# }
 
 __prepare() {
+  mkdir -p $HOME/.venv
   mkdir -p $HOME/.local/bin
   mkdir -p $HOME/.local/etc
   mkdir -p $HOME/.bash.d
 
-  __starship
-  __vim
+  # TODO: move to playbook
+  # __starship
+  # __vim
 }
 
-#
-# FIXME: clean this up to handle linux/darwin
-#
-
-__env
 __prepare
-
-if [[ "$CODESPACES" == "true" ]]; then
-  __cs_prepare
-fi
+__ansible

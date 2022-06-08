@@ -1,0 +1,29 @@
+---
+# file: roles/vim/tasks/setup.yml
+
+- name: Add the neovim PPA on Debian based hosts
+  ansible.builtin.apt_repository:
+    repo: 'ppa:neovim-ppa/stable'
+  when: ansible_os_family == 'Debian'
+
+- name: Install neovim on Debian based hosts
+  apt:
+    name: neovim
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Install neovim on Arch based hosts
+  pacman:
+    name: neovim
+    state: present
+  when: ansible_os_family == 'Archlinux'
+
+- name: Install neovim on macOS hosts
+  community.general.homebrew:
+    name: neovim
+    state: present
+  when: ansible_os_family == 'Darwin'
+
+# - name: Install vim plugins
+#   ansible.builtin.command:
+#     cmd: vim -n -i NONE -es -S <(echo -e 'silent! +PaqInstall\n+qall')

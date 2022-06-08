@@ -1,0 +1,6 @@
+# vim:ft=zsh:set ts=2 sw=2:
+
+alias v='nvim'
+alias vim='nvim'
+alias vimdiff='nvim -d'
+export EDITOR=nvim

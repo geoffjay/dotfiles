@@ -1,0 +1,6 @@
+---
+# file: roles/common/tasks/debian.yml
+
+- name: Run common tasks for Debian/Ubuntu
+  debug:
+    msg: Common Debian/Ubuntu tasks

@@ -1,0 +1,13 @@
+# vim:ft=sh
+
+# source custom bash signature
+#case "$-" in
+#  # only do if there's an interactive shell
+#  *i*) neofetch ;;
+#  *)   ;;
+#esac
+
+#if [[ ! $(grep -r neofetch /etc/profile*) ]]
+#then
+  neofetch
+#fi

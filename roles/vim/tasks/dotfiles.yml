@@ -1,0 +1,8 @@
+---
+# file: roles/vim/tasks/dotfiles.yml
+
+- name: Install vim configuration
+  git:
+    repo: git://github.com/geoffjay/dotvim.git
+    dest: "{{ lookup('env', 'HOME') }}/.config/nvim"
+    update: yes

@@ -1,0 +1,4 @@
+# vim:filetype=sh
+
+# other PATH bits that don't fit anywhere
+export PATH="$HOME/.local/bin:$PATH"

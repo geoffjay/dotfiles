@@ -1,0 +1,42 @@
+---
+# file: roles/dotfiles/tasks/main.yml
+
+- name: Setup configuration directories
+  ansible.builtin.file:
+    path: "{{ lookup('env', 'HOME') }}/{{ item }}"
+    state: directory
+    mode: 0775
+    recurse: yes
+  with_items:
+    - .config
+    - .gitconfig.d
+    - .local/bin
+    - .local/etc
+
+- name: Copy files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ lookup('env', 'HOME') }}/"
+  with_items:
+    - .bash.d
+    - .bash_profile
+    - .bashrc
+    - .profile
+    - .xbindkeysrc
+    - .Xdefaults
+    - .xinitrc
+    - .Xmodmap
+    - .Xresources
+    - .Xresources
+    - .Xresources.d
+    - .zsh.d
+    - .zshrc
+
+- name: Copy templates
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ lookup('env', 'HOME') }}/{{ item }}"
+  with_items:
+    - .gitconfig
+    - .gitconfig.d/github
+    - .gitconfig.d/gitlab

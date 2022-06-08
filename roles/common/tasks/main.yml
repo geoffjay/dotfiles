@@ -1,0 +1,140 @@
+---
+# file: roles/common/tasks/main.yml
+
+- name: Setting codespaces from environment
+  set_fact: is_codespaces="{{ lookup('env', 'CODESPACES') | default('false', True) }}"
+
+- name: Run common tasks for Arch hosts
+  include_tasks: arch.yml
+  when: ansible_os_family == "Archlinux"
+
+- name: Run common tasks for Debian hosts
+  include_tasks: debian.yml
+  when: "(ansible_os_family == 'Debian' and hostvars['localhost']['is_codespaces'] == false)"
+
+- name: Run common tasks for macOS hosts
+  include_tasks: macos.yml
+  when: ansible_os_family == "Darwin"
+
+- name: Run common tasks for Codespaces
+  include_tasks: codespaces.yml
+  when: "(ansible_os_family == 'Debian' and hostvars['localhost']['is_codespaces'] == true)"
+
+# XXX: things that need to go somewhere else
+- name: Install nodenv on macOS hosts
+  community.general.homebrew:
+    name: nodenv
+    state: present
+  when: ansible_os_family == 'Darwin'
+
+- name: Download nodenv
+  ansible.builtin.git:
+    repo: https://github.com/nodenv/nodenv.git
+    dest: "{{ lookup('env', 'HOME') }}/.nodenv"
+    update: yes
+  become: yes
+  become_user: "{{ user }}"
+  tags:
+    - common
+    - node
+
+- name: Create a symbolic link
+  ansible.builtin.file:
+    src: "{{ lookup('env', 'HOME') }}/.nodenv/bin/nodenv"
+    dest: "{{ lookup('env', 'HOME') }}/.local/bin/nodenv"
+    state: link
+  become: yes
+  become_user: "{{ user }}"
+  tags:
+    - common
+    - node
+    - nodenv
+
+- name: Build nodenv dynamic bash extension
+  ansible.builtin.command:
+    cmd: src/configure && make -C src || true
+    chdir: "{{ lookup('env', 'HOME') }}/.nodenv"
+  become: yes
+  become_user: "{{ user }}"
+  tags:
+    - common
+    - node
+    - nodenv
+
+- name: Create nodenv plugins path
+  ansible.builtin.file:
+    path: "{{ lookup('env', 'HOME') }}/.nodenv/plugins"
+    state: directory
+    mode: 0775
+    recurse: yes
+  become: yes
+  become_user: "{{ user }}"
+  tags:
+    - common
+    - node
+    - nodenv
+
+- name: Install nodenv plugins
+  ansible.builtin.git:
+    repo: "https://github.com/nodenv/{{ item }}.git"
+    dest: "{{ lookup('env', 'HOME') }}/.nodenv/plugins/{{ item }}"
+    update:
+  with_items:
+    - node-build
+    - nodenv-aliases
+  become: yes
+  become_user: "{{ user }}"
+  tags:
+    - common
+    - node
+    - nodenv
+
+- name: Install node v14.17
+  ansible.builtin.command: "/home/{{ user }}/.local/bin/nodenv install --skip-existing 14.17.0"
+  become: yes
+  become_user: "{{ user }}"
+  tags:
+    - common
+    - node
+    - nodenv
+
+- name: Set global node version to v14.17
+  ansible.builtin.command: "/home/{{ user }}/.local/bin/nodenv global 14.17.0"
+  become: yes
+  become_user: "{{ user }}"
+  tags:
+    - common
+    - node
+    - nodenv
+
+- name: Install yarn
+  ansible.builtin.shell:
+    cmd: |
+      eval "$(nodenv init -)"
+      npm install -g yarn
+  environment:
+    PATH: "{{ lookup('env', 'HOME') }}/.nodenv/bin:{{ lookup('env', 'HOME') }}/.nodenv/shims"
+  become: yes
+  become_user: "{{ user }}"
+  tags:
+    - common
+    - yarn
+
+- name: Install LSP servers using yarn
+  community.general.yarn:
+    name: "{{ item }}"
+    global: yes
+    state: latest
+  with_items:
+    - bash-language-server
+    - graphql
+    - graphql-language-service-cli
+    - pyright
+    - typescript-language-server
+    - vls
+    - yaml-language-server
+  become: yes
+  become_user: "{{ user }}"
+  tags:
+    - common
+    - lsp

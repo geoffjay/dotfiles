@@ -1,0 +1,25 @@
+# vim:filetype=sh
+
+_cs_new() {
+  repo=$(git x-repo)
+  branch=$(git x-branch-current)
+  gh codespace create -r "$repo" -b "$current" -m "premiumLinux"
+}
+alias cs-new=_cs_new
+
+_cs_fwd() {
+  repo=$(git x-repo)
+  branch=$(git x-branch-current)
+  codespace=$(gh codespace list --json name,repository,gitStatus --jq "$filter" | jq -r ".name")
+  gh codespace ports --codespace "$codespace" forward 2222:2222
+}
+alias cs-fwd=_cs_fwd
+
+_cs_ssh() {
+  repo=$(git x-repo)
+  branch=$(git x-branch-current)
+  filter=".[] | select(.repository == \"$repo\" and .gitStatus.ref == \"$branch\")"
+  codespace=$(gh codespace list --json name,repository,gitStatus --jq "$filter" | jq -r ".name")
+  TERM=xterm-256color gh codespace ssh --codespace "$codespace"
+}
+alias cs-ssh=_cs_ssh

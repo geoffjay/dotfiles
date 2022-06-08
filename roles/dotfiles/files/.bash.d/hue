@@ -1,0 +1,33 @@
+# vim:filetype=sh
+
+# TODO: add all lights off/on
+
+alias lt-den-off='hueadm group "Den" off'
+alias lt-den-on='hueadm group "Den" on'
+alias lt-den-bright='hueadm group "Den" red bri=255'
+alias lt-den-dim='hueadm group "Den" red bri=180'
+alias lt-den-dark='hueadm group "Den" red bri=100'
+
+alias lt-br-off='hueadm group "Bedroom" off'
+alias lt-br-on='hueadm group "Bedroom" on'
+alias lt-br-bright='hueadm group "Bedroom" red bri=255'
+alias lt-br-dim='hueadm group "Bedroom" red bri=180'
+alias lt-br-dark='hueadm group "Bedroom" red bri=100'
+
+alias lt-bath-off='hueadm group "Bathroom" off'
+alias lt-bath-on='hueadm group "Bathroom" on'
+alias lt-bath-bright='hueadm group "Bathroom" red bri=255'
+alias lt-bath-dim='hueadm group "Bathroom" red bri=180'
+alias lt-bath-dark='hueadm group "Bathroom" red bri=100'
+
+alias lt-lr-off='hueadm group "Living Room" off'
+alias lt-lr-on='hueadm group "Living Room" on'
+alias lt-lr-bright='hueadm group "Living Room" red bri=255'
+alias lt-lr-dim='hueadm group "Living Room" red bri=180'
+alias lt-lr-dark='hueadm group "Living Room" red bri=100'
+
+alias lt-hw-off='hueadm group "Front Hallway" off'
+alias lt-hw-on='hueadm group "Front Hallway" on'
+alias lt-hw-bright='hueadm group "Front Hallway" red bri=255'
+alias lt-hw-dim='hueadm group "Front Hallway" red bri=180'
+alias lt-hw-dark='hueadm group "Front Hallway" red bri=100'

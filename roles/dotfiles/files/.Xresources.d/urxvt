@@ -1,0 +1,48 @@
+! vim:ft=xdefaults
+
+!! Source Code Pro
+URxvt*font:             xft:SauceCodePro Nerd Font:regular:pixelsize=14:antialias=true,
+                        xft:Inconsolata\ for\ Powerline:pixelsize:14
+URxvt*imFont:           xft:SauceCodePro Nerd Font:regular:pixelsize=14:antialias=true
+URxvt*boldFont:         xft:SauceCodePro Nerd Font:semibold:pixelsize=14:antialias=true
+URxvt*italicFont:       xft:SauceCodePro Nerd Font:italic:pixelsize=14:antialias=true
+URxvt*boldItalicFont:   xft:SauceCodePro Nerd Font:semibold:italic:pixelsize=14:antialias=true
+URxvt*letterSpace:      0
+
+!! DejaVu
+!URxvt*font:             xft:DejaVuSansMonoForPowerline Nerd Font:regular:pixelsize=16:antialias=true
+!URxvt*imFont:           xft:DejaVuSansMonoForPowerline Nerd Font:regular:pixelsize=16:antialias=true
+!URxvt*boldFont:         xft:DejaVuSansMonoForPowerline Nerd Font:semibold:pixelsize=16:antialias=true
+!URxvt*italicFont:       xft:DejaVuSansMonoForPowerline Nerd Font:italic:pixelsize=16:antialias=true
+!URxvt*boldItalicFont:   xft:DejaVuSansMonoForPowerline Nerd Font:semibold:italic:pixelsize=16:antialias=true
+!URxvt*letterSpace:      -1
+
+! Inconsolata
+!URxvt*font:             xft:inconsolata:regular:pixelsize=18
+!URxvt*imFont:           xft:inconsolata:regular:pixelsize=18
+!URxvt*boldFont:         xft:inconsolata:bold:pixelsize=18
+!URxvt*letterSpace:      -1
+
+URxvt.iso14755:    false
+URxvt.iso14755_52: false
+URxvt*scrollBar:   false
+URxvt*imLocale:    en_US.UTF-8
+
+! Fix control+arrow keys
+URxvt.keysym.Control-Up:    \033[1;5A
+URxvt.keysym.Control-Down:  \033[1;5B
+URxvt.keysym.Control-Right: \033[1;5C
+URxvt.keysym.Control-Left:  \033[1;5D
+
+! Font scaling
+URxvt.keysym.C-Down: resize-font:smaller
+URxvt.keysym.C-Up:   resize-font:bigger
+
+! Clickable urls
+URxvt.perl-ext-common: default,resize-font,matcher
+URxvt.url-launcher:    /usr/bin/xdg-open
+URxvt.matcher.button:  1
+
+! Appearance
+URxvt*tintColor:   white
+URxvt.depth: 32

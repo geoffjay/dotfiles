@@ -1,0 +1,6 @@
+---
+# file: roles/common/tasks/codespaces.yml
+
+- name: Run common tasks in Codespaces
+  debug:
+    msg: Common Codespaces tasks
