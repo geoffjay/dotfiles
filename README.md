@@ -1,20 +1,7 @@
-## Personal dotfiles
+# Personal dotfiles
 
-### Build
+These are dotfiles, they are like many others, these ones are mine.
 
-```bash
-go build -o dotfiles main.go
-```
+## Setup
 
-### Update
-
-```bash
-./dotfiles update
-```
-
-### Testing
-
-```bash
-mkdir output
-HOME=output/ TEMPLATE_DIR=templates/ ./dotfiles update
-```
+Currently in transition to using `ansible` so setup is borked.
