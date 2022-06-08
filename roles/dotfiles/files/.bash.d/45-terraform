@@ -1,0 +1,9 @@
+# vim:filetype=sh
+
+alias tf="aws-vault exec \$AWS_PROFILE \$AWS_VAULT_EXEC_ARGS -- terraform"
+alias tfa="tf apply"
+alias tfp="tf plan"
+alias tfr="tf refresh"
+alias tfd="tf destroy"
+alias tfup="terraform init -upgrade; terraform get -update"
+alias tfur="tfup; tfr"

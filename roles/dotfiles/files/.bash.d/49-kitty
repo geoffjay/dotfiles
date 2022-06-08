@@ -1,0 +1,10 @@
+# vim:ft=sh:
+# vim:set ts=2 sw=2:
+
+# begin shell integration
+
+# if test -n "$KITTY_INSTALLATION_DIR" -a -e "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"; then
+#   source "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash";
+# fi
+
+# end shell integration

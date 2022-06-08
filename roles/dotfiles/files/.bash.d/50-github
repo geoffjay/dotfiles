@@ -1,0 +1,39 @@
+# vim:filetype=sh
+
+search-issues() {
+  hub api --cache 3600 graphql -f q="${1?}" -f query='
+    query($q: String!, $per_page: Int = 100, $after: String) {
+      search(query: $q, type: ISSUE, first: $per_page, after: $after) {
+        edges {
+          node {
+            ...on Issue {
+              number
+              title
+            }
+            ...on PullRequest {
+              number
+              title
+            }
+            ...on Labelable {
+              labels(first: 10) {
+                edges {
+                  node {
+                    name
+                  }
+                }
+              }
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  ' | jq -r '
+    .data.search.edges[].node
+    | [.number, .title, ([.labels.edges[].node.name] | join(","))]
+    | join("\t")
+  '
+}

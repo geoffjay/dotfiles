@@ -1,0 +1,3 @@
+# vim:filetype=sh
+
+export PYTHONPATH="/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg"

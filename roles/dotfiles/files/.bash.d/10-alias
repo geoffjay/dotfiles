@@ -8,6 +8,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
   alias ls="gls ${LS_OPTIONS}"
 fi
 
+alias ls="gls ${LS_OPTIONS}"
 alias l="ls ${LS_OPTIONS} -l"
 alias ll="ls ${LS_OPTIONS} -l"
 alias la="ls ${LS_OPTIONS} -la"

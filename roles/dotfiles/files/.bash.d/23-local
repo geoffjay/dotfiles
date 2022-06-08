@@ -1,0 +1,9 @@
+# vim:filetype=sh
+
+# other PATH bits that don't fit anywhere
+export PATH="$HOME/.local/bin:$PATH"
+export PATH=/usr/local/bin:$PATH
+
+# needed this once for mysql build through brew
+export LDFLAGS="-L/usr/local/opt/bzip2/lib"
+export CPPFLAGS="-I/usr/local/opt/bzip2/include"

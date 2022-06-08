@@ -1,0 +1,6 @@
+# vim:filetype=sh
+
+#eval $(go env | sed -r 's/^(set )?(\w+)=("?)(.*)\3$/\2="\4"/gm')
+
+export PATH="$HOME/go/bin:$PATH"
+export GO111MODULE="off"

@@ -1,0 +1,7 @@
+# vim:filetype=sh
+
+alias sum="paste -sd+ - | bc"
+
+function urldecode() {
+    local i="${*//+/ }"; echo -e "${i//%/\\x}";
+}

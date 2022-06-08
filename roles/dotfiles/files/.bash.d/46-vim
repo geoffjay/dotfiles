@@ -1,0 +1,31 @@
+# vim:filetype=sh
+
+export EDITOR=nvim
+
+alias v='nvim'
+alias vim='nvim'
+alias vimdiff='nvim -d'
+alias dbui='vim -c DBUI'
+
+#infocmp $TERM | sed 's/kbs=^[hH]/kbs=\177/' > $TERM.ti
+#tic $TERM.ti
+
+alias rvim='nvim -u $HOME/.config/nvim/init.ruby.vim'
+
+# TODO: try something that uses variables so this can be controlled with direnv
+#   alias vim='_vim'
+
+_vim_dont_use_me_yet() {
+    VIM_SCOPE="${VIM_SCOPE:-default}"
+    # TODO: use/remove -u from $@
+    VIM_CONFIG="$HOME/.config/nvim/init.vim"
+
+    case $VIM_SCOPE in
+        c) ;;
+        go) ;;
+        ruby) VIM_CONFIG="$HOME/.config/nvim/init.ruby.vim" ;;
+        *) ;;
+    esac
+
+    nvim -u $VIM_CONFIG $@
+}

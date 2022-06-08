@@ -1,0 +1,3 @@
+# vim:filetype=sh
+
+export PATH="$PATH:/usr/local/opt/flutter/bin"
